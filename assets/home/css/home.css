@@ -1,0 +1,19 @@
+.control-label {
+	margin-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-size: 9pt;
+}
+
+div.docin .control-label, div.panen .control-label {
+	margin-top: 5px!important;
+	margin-bottom: 5px!important;
+}
+
+div.docin, div.panen {
+	border-radius: 5px;
+}
+
+hr {
+	border-color: #000;
+}
