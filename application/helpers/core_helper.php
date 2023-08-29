@@ -847,11 +847,25 @@ if (! function_exists ( 'uploadFile' )) {
     $path_name = ubahNama($file_name, $upload_path);
     $file_path = $upload_path . $path_name;
     $moved = 0;
+
+    // cetak_r( $file );
+    // cetak_r( $file_path );
+    // cetak_r( '<br>' );
+
     if( file_exists($file_path) ){
       $moved = 1;
     }else{
       $moved = move_uploaded_file($file['tmp_name'], $file_path );
     }
+
+    // if (move_uploaded_file($file['tmp_name'], $file_path)) {
+    //   echo "<P>FILE UPLOADED TO: $file_path</P>";
+    // } else {
+    //   echo "<P>MOVE UPLOADED FILE FAILED!</P>";
+    //   print_r(error_get_last());
+    // }
+
+    // $moved = move_uploaded_file($file['tmp_name'], $file_path );
 
     if( $moved ) {
       return array(

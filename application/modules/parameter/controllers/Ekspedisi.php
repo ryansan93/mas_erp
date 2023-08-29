@@ -303,166 +303,81 @@ class Ekspedisi extends Public_Controller {
 	}
 
 	public function save() {
-		$params = json_decode($this->input->post('data_ekspedisi'),TRUE);
-		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
+		$params = $this->input->post('params');
 
-		$mappingFiles = mappingFiles($files);
+		try {
+			$status = "submit";
 
-		$status = "submit";
+			// ekspedisi
+			$m_ekspedisi = new \Model\Storage\Ekspedisi_model();
+			$ekspedisi_id = $m_ekspedisi->getNextIdentity();
 
-		// ekspedisi
-		$m_ekspedisi = new \Model\Storage\Ekspedisi_model();
-		$ekspedisi_id = $m_ekspedisi->getNextIdentity();
+			$m_ekspedisi->id = $ekspedisi_id;		
+			$m_ekspedisi->jenis = $params['jenis_ekspedisi'];
+			$kode_jenis = ($params['jenis_ekspedisi'] == "internal") ? "A" : "B";
+			$m_ekspedisi->nomor = $m_ekspedisi->getNextNomor($kode_jenis);
+			$m_ekspedisi->nama = $params['nama'];
+			$m_ekspedisi->nik = $params['ktp'];
+			$m_ekspedisi->cp = $params['cp'];
+			$m_ekspedisi->npwp = $params['npwp'];
+			$m_ekspedisi->alamat_kecamatan = $params['alamat_ekspedisi']['kecamatan'];
+			$m_ekspedisi->alamat_kelurahan = $params['alamat_ekspedisi']['kelurahan'];
+			$m_ekspedisi->alamat_rt = $params['alamat_ekspedisi']['rt'] ?: null;
+			$m_ekspedisi->alamat_rw = $params['alamat_ekspedisi']['rw'] ?: null;
+			$m_ekspedisi->alamat_jalan = $params['alamat_ekspedisi']['alamat'] ?: null;
+			$m_ekspedisi->usaha_kecamatan = $params['alamat_usaha']['kecamatan'];
+			$m_ekspedisi->usaha_kelurahan = $params['alamat_usaha']['kelurahan'];
+			$m_ekspedisi->usaha_rt = $params['alamat_usaha']['rt'] ?: null;
+			$m_ekspedisi->usaha_rw = $params['alamat_usaha']['rw'] ?: null;
+			$m_ekspedisi->usaha_jalan = $params['alamat_usaha']['alamat'] ?: null;
+			$m_ekspedisi->status = $status;
+			$m_ekspedisi->mstatus = 1;
+			$m_ekspedisi->platform = $params['platform'];
+			$m_ekspedisi->version = 1;
+			$m_ekspedisi->potongan_pph_id = $params['potongan_pph'];
+			$m_ekspedisi->save();
 
-		$m_ekspedisi->id = $ekspedisi_id;		
-		$m_ekspedisi->jenis = $params['jenis_ekspedisi'];
-		$kode_jenis = ($params['jenis_ekspedisi'] == "internal") ? "A" : "B";
-		$m_ekspedisi->nomor = $m_ekspedisi->getNextNomor($kode_jenis);
-		$m_ekspedisi->nama = $params['nama'];
-		$m_ekspedisi->nik = $params['ktp'];
-		$m_ekspedisi->cp = $params['cp'];
-		$m_ekspedisi->npwp = $params['npwp'];
-		$m_ekspedisi->alamat_kecamatan = $params['alamat_ekspedisi']['kecamatan'];
-		$m_ekspedisi->alamat_kelurahan = $params['alamat_ekspedisi']['kelurahan'];
-		$m_ekspedisi->alamat_rt = $params['alamat_ekspedisi']['rt'] ?: null;
-		$m_ekspedisi->alamat_rw = $params['alamat_ekspedisi']['rw'] ?: null;
-		$m_ekspedisi->alamat_jalan = $params['alamat_ekspedisi']['alamat'] ?: null;
-		$m_ekspedisi->usaha_kecamatan = $params['alamat_usaha']['kecamatan'];
-		$m_ekspedisi->usaha_kelurahan = $params['alamat_usaha']['kelurahan'];
-		$m_ekspedisi->usaha_rt = $params['alamat_usaha']['rt'] ?: null;
-		$m_ekspedisi->usaha_rw = $params['alamat_usaha']['rw'] ?: null;
-		$m_ekspedisi->usaha_jalan = $params['alamat_usaha']['alamat'] ?: null;
-		$m_ekspedisi->status = $status;
-		$m_ekspedisi->mstatus = 1;
-		$m_ekspedisi->platform = $params['platform'];
-		$m_ekspedisi->version = 1;
-		$m_ekspedisi->potongan_pph_id = $params['potongan_pph'];
-		$m_ekspedisi->save();
+			$deskripsi_log = 'di-' . $status . ' oleh ' . $this->userdata['detail_user']['nama_detuser'];
+			Modules::run( 'base/event/save', $m_ekspedisi, $deskripsi_log );
 
-		$deskripsi_log = 'di-' . $status . ' oleh ' . $this->userdata['detail_user']['nama_detuser'];
-		Modules::run( 'base/event/save', $m_ekspedisi, $deskripsi_log );
+			// telepon ekspedisi
+			$telepons = $params['telepons'];
+			foreach ($telepons as $k => $telepon) {
+				$m_telp = new \Model\Storage\TelpEkspedisi_model();
+				$m_telp->id = $m_telp->getNextIdentity();
+				$m_telp->ekspedisi_id = $ekspedisi_id;
+				$m_telp->nomor = $telepon;
+				$m_telp->save();
+				Modules::run( 'base/event/save', $m_telp, $deskripsi_log );
+			}
 
-		// telepon ekspedisi
-		$telepons = $params['telepons'];
-		foreach ($telepons as $k => $telepon) {
-			$m_telp = new \Model\Storage\TelpEkspedisi_model();
-			$m_telp->id = $m_telp->getNextIdentity();
-			$m_telp->ekspedisi_id = $ekspedisi_id;
-			$m_telp->nomor = $telepon;
-			$m_telp->save();
-			Modules::run( 'base/event/save', $m_telp, $deskripsi_log );
-    	}
+			// rekening dan bank ekspedisi
+			$banks = $params['banks'];
+			foreach ($banks as $k => $bank) {
+				$m_bank = new \Model\Storage\BankEkspedisi_model();
+				$bank_ekspedisi_id = $m_bank->getNextIdentity();
 
-    	// rekening dan bank ekspedisi
-    	$banks = $params['banks'];
-    	foreach ($banks as $k => $bank) {
-    		$m_bank = new \Model\Storage\BankEkspedisi_model();
-    		$bank_ekspedisi_id = $m_bank->getNextIdentity();
+				$m_bank->id = $bank_ekspedisi_id;
+				$m_bank->ekspedisi_id = $ekspedisi_id;
+				$m_bank->bank = $bank['nama_bank'];
+				$m_bank->rekening_nomor = $bank['nomer_rekening'];
+				$m_bank->rekening_pemilik = $bank['nama_pemilik'];
+				$m_bank->rekening_cabang_bank = $bank['cabang_bank'];
+				$m_bank->save();
+				Modules::run( 'base/event/save', $m_telp, $deskripsi_log );
+			}
 
-    		$m_bank->id = $bank_ekspedisi_id;
-    		$m_bank->ekspedisi_id = $ekspedisi_id;
-    		$m_bank->bank = $bank['nama_bank'];
-    		$m_bank->rekening_nomor = $bank['nomer_rekening'];
-    		$m_bank->rekening_pemilik = $bank['nama_pemilik'];
-    		$m_bank->rekening_cabang_bank = $bank['cabang_bank'];
-    		$m_bank->save();
-    		Modules::run( 'base/event/save', $m_telp, $deskripsi_log );
-
-    		$lampiran = $bank['lampiran'];
-    		$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-    		$file_name = $path_name = null;
-    		$isMoved = 0;
-    		if (!empty($file)) {
-    			$moved = uploadFile($file);
-    			$isMoved = $moved['status'];
-    			
-	    		if ($isMoved) {
-	    			$file_name = $moved['name'];
-	    			$path_name = $moved['path'];
-
-	    			$m_lampiran = new \Model\Storage\Lampiran_model();
-	    			$m_lampiran->tabel = 'bank_ekspedisi';
-	    			$m_lampiran->tabel_id = $bank_ekspedisi_id;
-	    			$m_lampiran->nama_lampiran = $lampiran['id'];
-	    			$m_lampiran->filename = $file_name ;
-	    			$m_lampiran->path = $path_name;
-	    			$m_lampiran->status = 1;
-	    			$m_lampiran->save();
-	    			Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
-	    		}else {
-	    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-	    		}
-    		}
-    	}
-
-    	$lampirans = $params['lampirans'];
-    	foreach ($lampirans as $lampiran) {
-    		$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-    		$file_name = $path_name = null;
-    		$isMoved = 0;
-    		if (!empty($file)) {
-    			$moved = uploadFile($file);
-    			$isMoved = $moved['status'];
-
-	    		if ($isMoved) {
-	    			$file_name = $moved['name'];
-	    			$path_name = $moved['path'];
-
-	    			$m_lampiran = new \Model\Storage\Lampiran_model();
-	    			$m_lampiran->tabel = 'ekspedisi';
-	    			$m_lampiran->tabel_id = $ekspedisi_id;
-	    			$m_lampiran->nama_lampiran = $lampiran['id'];
-	    			$m_lampiran->filename = $file_name ;
-	    			$m_lampiran->path = $path_name;
-	    			$m_lampiran->status = 1;
-	    			$m_lampiran->save();
-	    			Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
-	    		}else {
-	    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-	    		}
-    		}
-    	}
-
-    	$lampiran_dds = $params['lampiran_dds'];
-		$file = $mappingFiles[ $lampiran_dds['sha1'] . '_' . $lampiran_dds['name'] ] ?: '';
-		$file_name = $path_name = null;
-		$isMoved = 0;
-		if (!empty($file)) {
-			$moved = uploadFile($file);
-			$isMoved = $moved['status'];
-			
-    		if ($isMoved) {
-    			$file_name = $moved['name'];
-    			$path_name = $moved['path'];
-
-    			$m_lampiran = new \Model\Storage\Lampiran_model();
-    			$m_lampiran->tabel = 'ekspedisi';
-    			$m_lampiran->tabel_id = $ekspedisi_id;
-    			$m_lampiran->nama_lampiran = $lampiran_dds['id'];
-    			$m_lampiran->filename = $file_name ;
-    			$m_lampiran->path = $path_name;
-    			$m_lampiran->status = 1;
-    			$m_lampiran->save();
-    			Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
-    		}else {
-    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-    		}
+			$this->result['status'] = 1;
+			$this->result['content'] = array('id' => $ekspedisi_id);
+		} catch (Exception $e) {
+			$this->result['message'] = $e->getMessage();
 		}
-
-    	$this->result['status'] = 1;
-      	$this->result['message'] = 'Data ekspedisi sukses disimpan';
-      	$this->result['content'] = array('id'=>$ekspedisi_id);
 
     	display_json($this->result);
 	}
 
 	public function edit() {
-		$params = json_decode($this->input->post('data_ekspedisi'),TRUE);
-		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
-
-		if (!empty($files)) {
-            $mappingFiles = mappingFiles($files);
-        }
+		$params = $this->input->post('params');
 
 		$ekspedisi_id_old = $params['id'];
 		$status = $params['status'];
@@ -526,138 +441,109 @@ class Ekspedisi extends Public_Controller {
     		$m_bank->rekening_cabang_bank = $bank['cabang_bank'];
     		$m_bank->save();
     		Modules::run( 'base/event/update', $m_telp, $deskripsi_log );
-
-    		$lampiran = $bank['lampiran'];
-    		if ( !empty($lampiran) ) {
-    			if ( !empty($lampiran['sha1']) ) {
-	    			$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-	    		}
-
-	    		$file_name = $path_name = null;
-	    		$isMoved = 0;
-	    		if ( !empty($lampiran['sha1']) ) {
-                	$moved = uploadFile($file);
-                    $file_name = $moved['name'];
-                    $path_name = $moved['path'];
-                    $isMoved = $moved['status'];
-                } elseif ( empty($lampiran['sha1']) && !empty($lampiran['old']) ) {
-                	$m_lampiran = new \Model\Storage\Lampiran_model();
-                	$d_lampiran = $m_lampiran->where('tabel_id', $bank['id_old'])
-                							 ->where('tabel', 'bank_ekspedisi')
-                							 ->where('nama_lampiran', $lampiran['id'])
-                							 ->orderBy('id', 'desc')
-                							 ->first();
-
-                	$file_name = $d_lampiran['filename'];
-                    $path_name = $d_lampiran['path'];
-                    $isMoved = 1;
-                }
-
-	    		if ($isMoved) {
-	    			$m_lampiran = new \Model\Storage\Lampiran_model();
-	    			$m_lampiran->tabel = 'bank_ekspedisi';
-	    			$m_lampiran->tabel_id = $bank_ekspedisi_id;
-	    			$m_lampiran->nama_lampiran = $lampiran['id'];
-	    			$m_lampiran->filename = $file_name ;
-	    			$m_lampiran->path = $path_name;
-	    			$m_lampiran->status = 1;
-	    			$m_lampiran->save();
-	    			Modules::run( 'base/event/update', $m_lampiran, $deskripsi_log );
-
-	    		} else {
-	    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-	    		}
-	    	}
     	}
-
-    	$lampirans = $params['lampirans'];
-        if ( !empty($lampirans) ) {
-            foreach ($lampirans as $lampiran) {
-            	if ( !empty($lampiran['sha1']) ) {
-                	$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-            	}
-
-                $file_name = $path_name = null;
-                $isMoved = 0;
-            	if ( !empty($lampiran['sha1']) ) {
-                	$moved = uploadFile($file);
-                    $file_name = $moved['name'];
-                    $path_name = $moved['path'];
-                    $isMoved = $moved['status'];
-                } elseif ( empty($lampiran['sha1']) && !empty($lampiran['old']) ) {
-                	$m_lampiran = new \Model\Storage\Lampiran_model();
-                	$d_lampiran = $m_lampiran->where('tabel_id', $ekspedisi_id_old)
-                							 ->where('tabel', 'ekspedisi')
-                							 ->where('nama_lampiran', $lampiran['id'])
-                							 ->orderBy('id', 'desc')
-                							 ->first();
-
-                	$file_name = $d_lampiran['filename'];
-                    $path_name = $d_lampiran['path'];
-                    $isMoved = 1;
-                }
-
-                if ($isMoved) {
-                    $m_lampiran = new \Model\Storage\Lampiran_model();
-                    $m_lampiran->tabel = 'ekspedisi';
-                    $m_lampiran->tabel_id = $ekspedisi_id;
-                    $m_lampiran->nama_lampiran = $lampiran['id'];
-                    $m_lampiran->filename = $file_name ;
-                    $m_lampiran->path = $path_name;
-                    $m_lampiran->status = 1;
-                    $m_lampiran->save();
-                    Modules::run( 'base/event/update', $m_lampiran, $deskripsi_log );
-                } else {
-	    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-	    		}
-            }
-        }
-
-        $lampiran_dds = $params['lampiran_dds'];
-        if ( !empty($lampiran_dds) ) {
-			$file_name = $path_name = null;
-			$isMoved = 0;
-	        if ( !empty($lampiran_dds['sha1']) ) {
-				$file = $mappingFiles[ $lampiran_dds['sha1'] . '_' . $lampiran_dds['name'] ] ?: '';
-				if (!empty($file)) {
-					$moved = uploadFile($file);
-					$file_name = $moved['name'];
-					$path_name = $moved['path'];
-					$isMoved = $moved['status'];
-				}
-	        } elseif ( empty($lampiran_dds['sha1']) && !empty($lampiran_dds['old']) ) {
-	        	$m_lampiran = new \Model\Storage\Lampiran_model();
-	        	$d_lampiran = $m_lampiran->where('tabel_id', $ekspedisi_id_old)
-	        							 ->where('tabel', 'ekspedisi')
-	        							 ->where('nama_lampiran', $lampiran['id'])
-	        							 ->orderBy('id', 'desc')
-	        							 ->first();
-
-	        	$file_name = $d_lampiran['filename'];
-	            $path_name = $d_lampiran['path'];
-	            $isMoved = 1;
-	        }
-
-			if ($isMoved) {
-				$m_lampiran = new \Model\Storage\Lampiran_model();
-				$m_lampiran->tabel = 'ekspedisi';
-				$m_lampiran->tabel_id = $ekspedisi_id;
-				$m_lampiran->nama_lampiran = $lampiran_dds['id'];
-				$m_lampiran->filename = $file_name ;
-				$m_lampiran->path = $path_name;
-				$m_lampiran->status = 1;
-				$m_lampiran->save();
-				Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
-			} else {
-				display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-			}
-        }
 
     	$this->result['status'] = 1;
       	$this->result['message'] = 'Data ekspedisi sukses di edit';
-      	$this->result['content'] = array('id'=>$ekspedisi_id);
+      	$this->result['content'] = array('id' => $ekspedisi_id);
 
     	display_json($this->result);
+	}
+
+	public function uploadFile() {
+		$params = json_decode($this->input->post('data'),TRUE);
+		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
+
+		try {
+			$id = $params['id'];
+			$idx_upload = $params['idx_upload'];
+			if ( isset($params['lampirans'][ $idx_upload ]) ) {
+				$lampiran = $params['lampirans'][ $idx_upload ];
+				$id_lampiran_old = isset($lampiran['old']) ? $lampiran['old'] : null;
+
+				$table = 'ekspedisi';
+				$table_id = $id;
+				if ( stristr($lampiran['key'], 'bank') !== FALSE ) {
+					$table = 'bank_ekspedisi';
+
+					$split_key = explode('_', $lampiran['key']);
+					$bank = $split_key[1];
+					$rekening_nomor = $split_key[2];
+
+					$m_bank = new \Model\Storage\BankEkspedisi_model();
+					$d_bank = $m_bank->where('ekspedisi_id', $id)->where('bank', $bank)->where('rekening_nomor', $rekening_nomor)->first();
+
+					$table_id = $d_bank->id;
+				}
+
+				$file_name = $path_name = null;
+				$isMoved = 0;
+				if (!empty($files)) {
+					$mappingFiles = mappingFiles($files);
+					$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
+
+					if ( !empty($file) ) {
+						$moved = uploadFile($file);
+						$isMoved = $moved['status'];
+
+						if ($isMoved) {
+							$file_name = $moved['name'];
+							$path_name = $moved['path'];
+
+							$m_lampiran = new \Model\Storage\Lampiran_model();
+							$m_lampiran->tabel = $table;
+							$m_lampiran->tabel_id = $table_id;
+							$m_lampiran->nama_lampiran = isset($lampiran['id']) ? $lampiran['id'] : null;
+							$m_lampiran->filename = $file_name;
+							$m_lampiran->path = $path_name;
+							$m_lampiran->status = 1;
+							$m_lampiran->save();
+
+							$deskripsi_log = 'di-upload oleh ' . $this->userdata['detail_user']['nama_detuser'];
+							Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
+						} else {
+							display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT', 'cek' => 2]);
+						}
+					} else {
+						$m_lampiran = new \Model\Storage\Lampiran_model();
+						$d_lampiran_old = $m_lampiran->where('id', $id_lampiran_old)->first();
+
+						if ( $d_lampiran_old ) {
+							$m_lampiran = new \Model\Storage\Lampiran_model();
+							$m_lampiran->tabel = $d_lampiran_old['tabel'];
+							$m_lampiran->tabel_id = $table_id;
+							$m_lampiran->nama_lampiran = $d_lampiran_old['nama_lampiran'];
+							$m_lampiran->filename = $d_lampiran_old['filename'];
+							$m_lampiran->path = $d_lampiran_old['path'];
+							$m_lampiran->status = $d_lampiran_old['status'];
+							$m_lampiran->save();
+						}
+					}
+				} else {
+					$m_lampiran = new \Model\Storage\Lampiran_model();
+					$d_lampiran_old = $m_lampiran->where('id', $id_lampiran_old)->first();
+
+					if ( $d_lampiran_old ) {
+						$m_lampiran = new \Model\Storage\Lampiran_model();
+						$m_lampiran->tabel = $d_lampiran_old['tabel'];
+						$m_lampiran->tabel_id = $table_id;
+						$m_lampiran->nama_lampiran = $d_lampiran_old['nama_lampiran'];
+						$m_lampiran->filename = $d_lampiran_old['filename'];
+						$m_lampiran->path = $d_lampiran_old['path'];
+						$m_lampiran->status = $d_lampiran_old['status'];
+						$m_lampiran->save();
+					}
+				}
+			}
+
+			$this->result['status'] = 1;
+			$this->result['message'] = 'Data ekspedisi sukses disimpan';
+			$this->result['content'] = array('id' => $id);
+		} catch (Exception $e) {
+			$this->result['message'] = $e->getMessage();
+		}
+
+		display_json( $this->result );
 	}
 
 	public function ack() {
@@ -684,13 +570,9 @@ class Ekspedisi extends Public_Controller {
     	display_json($this->result);
 	}
 
-	public function approve() {
+	public function approve() {}
 
-	}
-
-	public function reject() {
-
-	}
+	public function reject() {}
 
 	public function nonAktif() {
 		$params = json_decode($this->input->post('data'),TRUE);

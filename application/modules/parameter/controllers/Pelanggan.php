@@ -354,10 +354,7 @@ class Pelanggan extends Public_Controller {
 	}
 
 	public function save() {
-		$params = json_decode($this->input->post('data_pelanggan'),TRUE);
-		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
-
-		$mappingFiles = mappingFiles($files);
+		$params = $this->input->post('params');
 
 		$status = "submit";
 
@@ -421,91 +418,7 @@ class Pelanggan extends Public_Controller {
     		$m_bank->rekening_cabang_bank = $bank['cabang_bank'];
     		$m_bank->save();
     		Modules::run( 'base/event/save', $m_telp, $deskripsi_log_pelanggan );
-
-    		$lampiran = $bank['lampiran'];
-    		$file_name = $path_name = null;
-    		if ( !empty($lampiran) ) {
-	    		$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-	    		$isMoved = 0;
-	    		if (!empty($file)) {
-	    			$moved = uploadFile($file);
-	    			$isMoved = $moved['status'];
-	    		}
-	    		if ($isMoved) {
-	    			$file_name = $moved['name'];
-					$path_name = $moved['path'];
-	    		}
-	    		
-				$m_lampiran = new \Model\Storage\Lampiran_model();
-				$m_lampiran->tabel = 'bank_pelanggan';
-				$m_lampiran->tabel_id = $bank_plg_id;
-				$m_lampiran->nama_lampiran = $lampiran['id'];
-				$m_lampiran->filename = $file_name ;
-				$m_lampiran->path = $path_name;
-				$m_lampiran->status = 1;
-				$m_lampiran->save();
-				Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log_pelanggan );
-    		}
-    		// if ($isMoved) {
-
-    		// } else {
-    		// 	display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-    		// }
     	}
-
-    	$lampirans = $params['lampirans'];
-    	foreach ($lampirans as $lampiran) {
-    		$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-    		$file_name = $path_name = null;
-    		$isMoved = 0;
-    		if (!empty($file)) {
-    			$moved = uploadFile($file);
-    			$isMoved = $moved['status'];
-    		}
-    		if ($isMoved) {
-    			$file_name = $moved['name'];
-    			$path_name = $moved['path'];
-
-    			$m_lampiran = new \Model\Storage\Lampiran_model();
-    			$m_lampiran->tabel = 'pelanggan';
-    			$m_lampiran->tabel_id = $pelanggan_id;
-    			$m_lampiran->nama_lampiran = $lampiran['id'];
-    			$m_lampiran->filename = $file_name ;
-    			$m_lampiran->path = $path_name;
-    			$m_lampiran->status = 1;
-    			$m_lampiran->save();
-    			Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log_pelanggan );
-
-    		}else {
-    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-    		}
-    	}
-
-    	$lampiran_ddp = $params['lampiran_ddp'];
-		$file = $mappingFiles[ $lampiran_ddp['sha1'] . '_' . $lampiran_ddp['name'] ] ?: '';
-		$file_name = $path_name = null;
-		$isMoved = 0;
-		if (!empty($file)) {
-			$moved = uploadFile($file);
-			$isMoved = $moved['status'];
-			
-    		if ($isMoved) {
-    			$file_name = $moved['name'];
-    			$path_name = $moved['path'];
-
-    			$m_lampiran = new \Model\Storage\Lampiran_model();
-    			$m_lampiran->tabel = 'pelanggan';
-    			$m_lampiran->tabel_id = $pelanggan_id;
-    			$m_lampiran->nama_lampiran = $lampiran_ddp['id'];
-    			$m_lampiran->filename = $file_name ;
-    			$m_lampiran->path = $path_name;
-    			$m_lampiran->status = 1;
-    			$m_lampiran->save();
-    			Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log_pelanggan );
-    		}else {
-    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-    		}
-		}
 
     	$m_sp = new \Model\Storage\SaldoPelanggan_model();
 		$m_sp->jenis_saldo = 'D';
@@ -526,12 +439,7 @@ class Pelanggan extends Public_Controller {
 	}
 
 	public function edit() {
-		$params = json_decode($this->input->post('data_pelanggan'),TRUE);
-		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
-
-		if (!empty($files)) {
-            $mappingFiles = mappingFiles($files);
-        }
+		$params = $this->input->post('params');
 
 		$pelanggan_id_old = $params['id'];
 		$status = $params['status'];
@@ -595,136 +503,113 @@ class Pelanggan extends Public_Controller {
     		$m_bank->rekening_cabang_bank = $bank['cabang_bank'];
     		$m_bank->save();
     		Modules::run( 'base/event/update', $m_telp, $deskripsi_log_pelanggan );
-
-    		$lampiran = $bank['lampiran'];
-    		if ( !empty($lampiran) ) {
-    			if ( !empty($lampiran['sha1']) ) {
-	    			$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-	    		}
-
-	    		$file_name = $path_name = null;
-	    		$isMoved = 0;
-	    		if ( !empty($lampiran['sha1']) ) {
-                	$moved = uploadFile($file);
-                    $file_name = $moved['name'];
-                    $path_name = $moved['path'];
-                    $isMoved = $moved['status'];
-                } elseif ( empty($lampiran['sha1']) && !empty($lampiran['old']) ) {
-                	$m_lampiran = new \Model\Storage\Lampiran_model();
-                	$d_lampiran = $m_lampiran->where('tabel_id', $bank['id_old'])
-                							 ->where('tabel', 'bank_pelanggan')
-                							 ->where('nama_lampiran', $lampiran['id'])
-                							 ->orderBy('id', 'desc')
-                							 ->first();
-
-                	$file_name = $d_lampiran['filename'];
-                    $path_name = $d_lampiran['path'];
-                    $isMoved = 1;
-                }
-
-	    		if ($isMoved) {
-	    			$m_lampiran = new \Model\Storage\Lampiran_model();
-	    			$m_lampiran->tabel = 'bank_pelanggan';
-	    			$m_lampiran->tabel_id = $bank_plg_id;
-	    			$m_lampiran->nama_lampiran = $lampiran['id'];
-	    			$m_lampiran->filename = $file_name ;
-	    			$m_lampiran->path = $path_name;
-	    			$m_lampiran->status = 1;
-	    			$m_lampiran->save();
-	    			Modules::run( 'base/event/update', $m_lampiran, $deskripsi_log_pelanggan );
-
-	    		}else {
-	    			display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-	    		}
-	    	}
     	}
-
-    	$lampirans = $params['lampirans'];
-        if ( !empty($lampirans) ) {
-            foreach ($lampirans as $lampiran) {
-            	if ( !empty($lampiran['sha1']) ) {
-                	$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
-            	}
-
-                $file_name = $path_name = null;
-                $isMoved = 0;
-            	if ( !empty($lampiran['sha1']) ) {
-                	$moved = uploadFile($file);
-                    $file_name = $moved['name'];
-                    $path_name = $moved['path'];
-                    $isMoved = $moved['status'];
-                } elseif ( empty($lampiran['sha1']) && !empty($lampiran['old']) ) {
-                	$m_lampiran = new \Model\Storage\Lampiran_model();
-                	$d_lampiran = $m_lampiran->where('tabel_id', $pelanggan_id_old)
-                							 ->where('tabel', 'pelanggan')
-                							 ->where('nama_lampiran', $lampiran['id'])
-                							 ->orderBy('id', 'desc')
-                							 ->first();
-
-                	$file_name = $d_lampiran['filename'];
-                    $path_name = $d_lampiran['path'];
-                    $isMoved = 1;
-                }
-
-                if ($isMoved) {
-                    $m_lampiran = new \Model\Storage\Lampiran_model();
-                    $m_lampiran->tabel = 'pelanggan';
-                    $m_lampiran->tabel_id = $pelanggan_id;
-                    $m_lampiran->nama_lampiran = $lampiran['id'];
-                    $m_lampiran->filename = $file_name ;
-                    $m_lampiran->path = $path_name;
-                    $m_lampiran->status = 1;
-                    $m_lampiran->save();
-                    Modules::run( 'base/event/update', $m_lampiran, $deskripsi_log_pelanggan );
-                }
-            }
-        }
-
-        $lampiran_ddp = $params['lampiran_ddp'];
-        if ( !empty($lampiran_ddp) ) {
-			$file_name = $path_name = null;
-			$isMoved = 0;
-	        if ( !empty($lampiran_ddp['sha1']) ) {
-				$file = $mappingFiles[ $lampiran_ddp['sha1'] . '_' . $lampiran_ddp['name'] ] ?: '';
-				if (!empty($file)) {
-					$moved = uploadFile($file);
-					$file_name = $moved['name'];
-					$path_name = $moved['path'];
-					$isMoved = $moved['status'];
-				}
-	        } elseif ( empty($lampiran_ddp['sha1']) && !empty($lampiran_ddp['old']) ) {
-	        	$m_lampiran = new \Model\Storage\Lampiran_model();
-	        	$d_lampiran = $m_lampiran->where('tabel_id', $pelanggan_id_old)
-	        							 ->where('tabel', 'pelanggan')
-	        							 ->where('nama_lampiran', $lampiran['id'])
-	        							 ->orderBy('id', 'desc')
-	        							 ->first();
-
-	        	$file_name = $d_lampiran['filename'];
-	            $path_name = $d_lampiran['path'];
-	            $isMoved = 1;
-	        }
-
-			if ($isMoved) {
-				$m_lampiran = new \Model\Storage\Lampiran_model();
-				$m_lampiran->tabel = 'pelanggan';
-				$m_lampiran->tabel_id = $pelanggan_id;
-				$m_lampiran->nama_lampiran = $lampiran_ddp['id'];
-				$m_lampiran->filename = $file_name ;
-				$m_lampiran->path = $path_name;
-				$m_lampiran->status = 1;
-				$m_lampiran->save();
-				Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log_pelanggan );
-			} else {
-				display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT']);
-			}
-        }
 
     	$this->result['status'] = 1;
       	$this->result['message'] = 'Data pelanggan sukses di edit';
       	$this->result['content'] = array('id'=>$pelanggan_id);
 
     	display_json($this->result);
+	}
+
+	public function uploadFile() {
+		$params = json_decode($this->input->post('data'),TRUE);
+		$files = isset($_FILES['files']) ? $_FILES['files'] : [];
+
+		try {
+			$id = $params['id'];
+			$idx_upload = $params['idx_upload'];
+			if ( isset($params['lampirans'][ $idx_upload ]) ) {
+				$lampiran = $params['lampirans'][ $idx_upload ];
+				$id_lampiran_old = isset($lampiran['old']) ? $lampiran['old'] : null;
+
+				$table = 'pelanggan';
+				$table_id = $id;
+				if ( stristr($lampiran['key'], 'bank') !== FALSE ) {
+					$table = 'bank_pelanggan';
+
+					$split_key = explode('_', $lampiran['key']);
+					$bank = $split_key[1];
+					$rekening_nomor = $split_key[2];
+
+					$m_bank = new \Model\Storage\BankPelanggan_model();
+					$d_bank = $m_bank->where('pelanggan', $id)->where('bank', $bank)->where('rekening_nomor', $rekening_nomor)->first();
+
+					$table_id = $d_bank->id;
+				}
+
+				$file_name = $path_name = null;
+				$isMoved = 0;
+				if (!empty($files)) {
+					$mappingFiles = mappingFiles($files);
+
+					$file = null;
+					if ( isset($lampiran['sha1']) && !empty($lampiran['sha1']) ) {
+						$file = $mappingFiles[ $lampiran['sha1'] . '_' . $lampiran['name'] ] ?: '';
+					}
+
+					if ( !empty($file) ) {
+						$moved = uploadFile($file);
+						$isMoved = $moved['status'];
+
+						if ($isMoved) {
+							$file_name = $moved['name'];
+							$path_name = $moved['path'];
+
+							$m_lampiran = new \Model\Storage\Lampiran_model();
+							$m_lampiran->tabel = $table;
+							$m_lampiran->tabel_id = $table_id;
+							$m_lampiran->nama_lampiran = isset($lampiran['id']) ? $lampiran['id'] : null;
+							$m_lampiran->filename = $file_name;
+							$m_lampiran->path = $path_name;
+							$m_lampiran->status = 1;
+							$m_lampiran->save();
+
+							$deskripsi_log = 'di-upload oleh ' . $this->userdata['detail_user']['nama_detuser'];
+							Modules::run( 'base/event/save', $m_lampiran, $deskripsi_log );
+						} else {
+							display_json(['status'=>0, 'message'=>'error, segera hubungi tim IT', 'cek' => 2]);
+						}
+					} else {
+						$m_lampiran = new \Model\Storage\Lampiran_model();
+						$d_lampiran_old = $m_lampiran->where('id', $id_lampiran_old)->first();
+
+						if ( $d_lampiran_old ) {
+							$m_lampiran = new \Model\Storage\Lampiran_model();
+							$m_lampiran->tabel = $d_lampiran_old['tabel'];
+							$m_lampiran->tabel_id = $table_id;
+							$m_lampiran->nama_lampiran = $d_lampiran_old['nama_lampiran'];
+							$m_lampiran->filename = $d_lampiran_old['filename'];
+							$m_lampiran->path = $d_lampiran_old['path'];
+							$m_lampiran->status = $d_lampiran_old['status'];
+							$m_lampiran->save();
+						}
+					}
+				} else {
+					$m_lampiran = new \Model\Storage\Lampiran_model();
+					$d_lampiran_old = $m_lampiran->where('id', $id_lampiran_old)->first();
+
+					if ( $d_lampiran_old ) {
+						$m_lampiran = new \Model\Storage\Lampiran_model();
+						$m_lampiran->tabel = $d_lampiran_old['tabel'];
+						$m_lampiran->tabel_id = $table_id;
+						$m_lampiran->nama_lampiran = $d_lampiran_old['nama_lampiran'];
+						$m_lampiran->filename = $d_lampiran_old['filename'];
+						$m_lampiran->path = $d_lampiran_old['path'];
+						$m_lampiran->status = $d_lampiran_old['status'];
+						$m_lampiran->save();
+					}
+				}
+			}
+
+			$this->result['status'] = 1;
+			$this->result['message'] = 'Data pelanggan sukses disimpan';
+			$this->result['content'] = array('id' => $id);
+		} catch (Exception $e) {
+			$this->result['message'] = $e->getMessage();
+		}
+
+		display_json( $this->result );
 	}
 
 	public function ack() {

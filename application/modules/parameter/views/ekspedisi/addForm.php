@@ -17,7 +17,7 @@
 							<select class="form-control" name="jenis_ekspedisi">
 								<option value="internal">Internal</option>
 								<option value="eksternal">Eksternal</option>
-								<option value="ekspedisi">Ekspedisi</option>
+								<!-- <option value="ekspedisi">Ekspedisi</option> -->
 							</select>
 						</div>
 					</div>
@@ -293,7 +293,7 @@
 				</div>
 			</div>
 			<div id="lampiran_ekspedisi">
-				<div class="col-sm-12"><b>Lampiran DDS</b></div>
+				<div class="col-sm-12"><b>Lampiran DDP</b></div>
 				<label class="col-sm-2 text-right" data-idnama="<?php echo $list_lampiran_dds_ekspedisi['id'] ?>">
 					<input required="required" type="file" onchange="showNameFile(this)" class="file_lampiran ekspedisi" data-required="1" name="lampiran_dds" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran DDS">
 					<i class="glyphicon glyphicon-paperclip cursor-p" title="Lampiran DDS"></i>
@@ -305,6 +305,6 @@
 <div class="col-sm-12 no-padding text-right">
 	<hr>
 	<?php if ( $akses['a_submit'] == 1): ?>
-		<button type="button" class="btn btn-large btn-primary pull-right" id="submit_ekspedisi" onclick="ekspedisi.save()"><i class="fa fa-save"></i>Simpan</button>
+		<button type="button" class="btn btn-large btn-primary pull-right" id="submit_ekspedisi" onclick="ekspedisi.save()"><i class="fa fa-save"></i> Simpan</button>
 	<?php endif; ?>
 </div>

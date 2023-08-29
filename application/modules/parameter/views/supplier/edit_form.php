@@ -101,7 +101,7 @@
 							<!-- <span class="file"><?php echo $l_ktp['filename']; ?></span> -->
 							<a href="uploads/<?php echo $l_ktp['filename']; ?>" target="_blank"><?php echo $l_ktp['filename']; ?></a>
 							<label class="col-sm-1" data-idnama="<?php echo $list_lampiran_supplier['id'] ?>">
-								<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_ktp" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran File KTP" data-old="<?php echo $l_ktp['path']; ?>">
+								<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_ktp" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran File KTP" data-old="<?php echo $l_ktp['id']; ?>">
 								<i class="glyphicon glyphicon-paperclip cursor-p" title="Lampiran DDS"></i>
 							</label>
 						</div>
@@ -229,7 +229,7 @@
 							<!-- <span class="file"><?php echo $l_npwp['filename']; ?></span> -->
 							<a href="uploads/<?php echo $l_npwp['filename']; ?>" target="_blank"><?php echo $l_npwp['filename']; ?></a>
 							<label class="col-sm-1" data-idnama="<?php echo $list_lampiran_usaha_supplier['id'] ?>">
-								<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_npwp" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran NWPW" data-old="<?php echo $l_npwp['path']; ?>">
+								<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_npwp" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran NWPW" data-old="<?php echo $l_npwp['id']; ?>">
 								<i class="glyphicon glyphicon-paperclip cursor-p" title="Lampiran NPWP"></i>
 							</label>
 						</div>
@@ -362,6 +362,7 @@
 						<tbody>
 							<?php foreach ($data['banks'] as $bank) : ?>
 								<?php 
+									$id_old = $bank['lampiran']['id'];
 									$path = $bank['lampiran']['path'];
 									$filename = $bank['lampiran']['filename'];
 								?>
@@ -374,7 +375,7 @@
 										<!-- <span class="file"><?php echo $filename; ?></span> -->
 										<a href="uploads/<?php echo $filename; ?>" target="_blank"><?php echo $filename; ?></a>
 										<label class="text-right" data-idnama="<?php echo $list_lampiran_rekening_supplier['id'] ?>">
-											<input type="file" onchange="showNameFile(this)" class="file_lampiran bank_supplier" name="lampiran_dds[]" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran Rekening" data-old="<?php echo $path; ?>">
+											<input type="file" onchange="showNameFile(this)" class="file_lampiran bank_supplier" name="lampiran_dds[]" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran Rekening" data-old="<?php echo $id_old; ?>">
 											<i class="glyphicon glyphicon-paperclip cursor-p" title="Lampiran Rekening"></i>
 										</label>
 									</td>
@@ -393,7 +394,7 @@
 				<!-- <span class="file"><?php echo $l_dds['filename']; ?></span> -->
 				<a href="uploads/<?php echo $l_dds['filename']; ?>" target="_blank"><?php echo $l_dds['filename']; ?></a>
 				<label class="col-sm-2 text-right" data-idnama="<?php echo $list_lampiran_dds_supplier['id'] ?>">
-					<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_dds" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran DDS" data-old="<?php echo $l_dds['path']; ?>">
+					<input type="file" onchange="showNameFile(this)" class="file_lampiran supplier" name="lampiran_dds" data-allowtypes="doc|pdf|docx|jpg|jpeg|png" style="display: none;" placeholder="Lampiran DDS" data-old="<?php echo $l_dds['id']; ?>">
 					<i class="glyphicon glyphicon-paperclip cursor-p" title="Lampiran DDS"></i>
 				</label>
 			</div>

@@ -14,13 +14,13 @@
 						</div>
 					<?php endif; ?>
 					<div class="form-group align-items-center d-flex">
-						<span class="col-sm-6 text-right">Jenis Supplier</span>
+						<span class="col-sm-6 text-right">Jenis Ekspedisi</span>
 						<div class="col-sm-6">
 							<input class="form-control" type="text" name="jenis_supl" value="<?php echo $data['jenis']; ?>" readonly>
 						</div>
 					</div>
 					<div class="form-group align-items-center d-flex">
-						<span class="col-sm-6 text-right">Nama Supplier</span>
+						<span class="col-sm-6 text-right">Nama Ekspedisi</span>
 						<div class="col-sm-6">
 							<input required="required" class="form-control" type="text" name="nama_supl" placeholder="Perusahaan/Perseorangan" value="<?php echo $data['nama']; ?>" readonly>
 						</div>
@@ -290,7 +290,7 @@
 				</div>
 			</div>
 			<div id="lampiran_supplier">
-				<div class="col-sm-2"><b>Lampiran DDS</b></div>
+				<div class="col-sm-2"><b>Lampiran DDP</b></div>
 				<div class="col-sm-10">
 					<a target="_blank" href="<?php echo 'uploads/'.$l_dds['path']; ?>" ><?php echo $l_dds['filename']; ?></a>
 				</div>

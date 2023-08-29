@@ -1,3 +1,5 @@
+var idxUploadFile = 0;
+
 var plg = {
 	start_up : function	() {
 		$('button#search-pagination').on('click', function() {
@@ -338,53 +340,12 @@ var plg = {
     				var div_pelanggan = $('div[name=data-pelanggan]');
     				var rek_pelanggan = $('div#rekening_pelanggan');
 
-        			var formData = new FormData();
-        			var lampirans = $.map( $(div_pelanggan).find('input[type=file]'), function(ipt){
-			            if (!empty( $(ipt).val() )) {
-							var __file = $(ipt).get(0).files[0];
-							formData.append('files[]', __file);
-							return {
-								'id' : $(ipt).closest('label').attr('data-idnama'),
-								'name' : __file.name,
-								'sha1' : $(ipt).attr('data-sha1'),
-							};
-			            }
-			        });
-
-			        var lampiran_ddp = null;
-			        if ( !empty( $('input[type=file][name=lampiran_ddp]').val() )) {
-						var key = $('input[type=file][name=lampiran_ddp]').attr('name');
-						var __file = $('input[type=file][name=lampiran_ddp]').get(0).files[0];
-						formData.append('files[]', __file);
-
-						lampiran_ddp = {
-							'id' : $('input[type=file][name=lampiran_ddp]').closest('label').attr('data-idnama'),
-							'name' : __file.name,
-							'sha1' : $('input[type=file][name=lampiran_ddp]').attr('data-sha1')
-						};
-		            }
-
 					var banks = $.map( $(rek_pelanggan).find('tr.detail_rekening'), function(tr) {
-
-						var ipt = $(tr).find('input:file');
-						var lampiran = null;
-						if ( !empty($(ipt).val()) ) {
-							var __file = $(ipt).get(0).files[0];
-							formData.append('files[]', __file);
-
-							lampiran = {
-								'id' : $(ipt).closest('label').attr('data-idnama'),
-								'name' : __file.name,
-								'sha1' : $(ipt).attr('data-sha1'),
-							};
-						}
-
 						var data = {
 							'nomer_rekening' : $(tr).find('input[name=rekening_plg]').val(),
 							'nama_pemilik' : $(tr).find('input[name=pemilik_rekening]').val(),
 							'nama_bank' : $(tr).find('input[name=bank_rekening]').val(),
-							'cabang_bank' : $(tr).find('input[name=cabang_rekening]').val(),
-							'lampiran' : lampiran,
+							'cabang_bank' : $(tr).find('input[name=cabang_rekening]').val()
 						}
 
 						return data;
@@ -430,44 +391,33 @@ var plg = {
 						'alamat_pelanggan' : alamat_pelanggan,
 						'alamat_usaha' : alamat_usaha,
 						'banks' : banks,
-						'lampirans' : lampirans,
-						'lampiran_ddp' : lampiran_ddp,
 						'platform' : platform
 					};
 
-					formData.append('data_pelanggan', JSON.stringify(data_pelanggan));
-					plg.executeSave(formData);
-					// console.log(data_pelanggan);
+					var params = data_pelanggan;
+
+					$.ajax({
+						url :'parameter/Pelanggan/save',
+						type : 'post',
+						data : {
+							'params': params
+						},
+						beforeSend : function(){
+							showLoading();
+						},
+						success : function(data){
+							if(data.status == 1){
+								plg.uploadFile( data.content.id );
+							}else{
+								hideLoading();
+								bootbox.alert(data.message);
+							}
+						}
+					});
 	    		}
     		});
 		}
 	}, // end - save
-
-	executeSave : function(formData){
-		var div_tab_pane = $('div.tab-pane');
-
-		$.ajax({
-			url :'parameter/Pelanggan/save',
-			type : 'post',
-			data : formData,
-			beforeSend : function(){
-				showLoading();
-			},
-			success : function(data){
-				hideLoading();
-				if(data.status){
-					bootbox.alert(data.message,function() {
-						plg.getLists();
-						plg.load_form(data.content.id);
-					});
-				}else{
-					bootbox.alert(data.message);
-				}
-			},
-			contentType : false,
-			processData : false,
-		});
-	}, // end - executeSave
 
 	edit : function () {
 		var error = 0;
@@ -496,67 +446,13 @@ var plg = {
     				var mstatus = $('input[type=hidden]').data('mstatus');
     				var version = $('input[type=hidden]').data('version');
 
-        			var formData = new FormData();
-        			var lampirans = $.map( $(div_pelanggan).find('input[type=file]'), function(ipt){
-			            if (!empty( $(ipt).val() ) || !empty( $(ipt).data('old') ) ) {
-							var filename = $(ipt).data('old');
-							if ( !empty( $(ipt).val() ) ) {
-								var __file = $(ipt).get(0).files[0];
-								formData.append('files[]', __file);
-
-								filename = __file.name;
-							};
-
-							return {
-								'id' : $(ipt).closest('label').attr('data-idnama'),
-								'name' : filename,
-								'sha1' : $(ipt).attr('data-sha1'),
-								'old' : $(ipt).data('old')
-							};
-			            }
-			        });
-
-			        var lampiran_ddp = null;
-			        if ( !empty( $('input[type=file][name=lampiran_ddp]').val() )) {
-						var key = $('input[type=file][name=lampiran_ddp]').attr('name');
-						var __file = $('input[type=file][name=lampiran_ddp]').get(0).files[0];
-						formData.append('files[]', __file);
-
-						lampiran_ddp = {
-							'id' : $('input[type=file][name=lampiran_ddp]').closest('label').attr('data-idnama'),
-							'name' : __file.name,
-							'sha1' : $('input[type=file][name=lampiran_ddp]').attr('data-sha1'),
-							'old' : $('input[type=file][name=lampiran_ddp]').data('old')
-						};
-		            }
-
 					var banks = $.map( $(rek_pelanggan).find('tr.detail_rekening'), function(tr) {
-						var ipt = $(tr).find('input:file');
-						var lampiran = null;
-						if (!empty( $(ipt).val() ) || !empty( $(ipt).data('old') ) ) {
-							var filename = $(ipt).data('old');
-							if ( !empty( $(ipt).val() ) ) {
-								var __file = $(ipt).get(0).files[0];
-								formData.append('files[]', __file);
-
-								filename = __file.name;
-							};
-
-							var lampiran = {
-								'id' : $(ipt).closest('label').attr('data-idnama'),
-								'name' : filename,
-								'sha1' : $(ipt).attr('data-sha1'),
-								'old' : $(ipt).data('old')
-							};
-						}
-
 						var data = {
 							'id_old' : $(tr).find('input[name=rekening_plg]').data('id'),
 							'nomer_rekening' : $(tr).find('input[name=rekening_plg]').val(),
 							'nama_pemilik' : $(tr).find('input[name=pemilik_rekening]').val(),
 							'nama_bank' : $(tr).find('input[name=bank_rekening]').val(),
-							'cabang_bank' : $(tr).find('input[name=cabang_rekening]').val(),
-							'lampiran' : lampiran,
+							'cabang_bank' : $(tr).find('input[name=cabang_rekening]').val()
 						}
 
 						return data;
@@ -607,44 +503,129 @@ var plg = {
 						'alamat_pelanggan' : alamat_pelanggan,
 						'alamat_usaha' : alamat_usaha,
 						'banks' : banks,
-						'lampirans' : lampirans,
-						'lampiran_ddp' : lampiran_ddp,
 						'platform' : platform
 					};
 
-					formData.append('data_pelanggan', JSON.stringify(data_pelanggan));
-					plg.executeEdit(formData);
-					// console.log(data_pelanggan);
+					var params = data_pelanggan;
+
+					$.ajax({
+						url :'parameter/Pelanggan/edit',
+						type : 'post',
+						data : {
+							'params': params
+						},
+						beforeSend : function(){
+							showLoading();
+						},
+						success : function(data){
+							if(data.status == 1){
+								plg.uploadFile( data.content.id );
+							}else{
+								hideLoading();
+								bootbox.alert(data.message);
+							}
+						}
+					});
 	    		}
     		});
 		}
 	}, // end - edit
 
-	executeEdit : function(formData){
-		var div_tab_pane = $('div.tab-pane');
+	uploadFile: function(id) {
+		var div_action = $('div#action');
+
+		var idx_lampirans = 0;
+		var lampirans = [];
+
+		var formData = new FormData();
+		$.map( $(div_action).find('input[name=lampiran_ktp], input[name=lampiran_npwp], input[name=lampiran_ddp]'), function(ipt){
+			var key = $(ipt).attr('name');
+			
+			var name = null;
+
+			if (!empty( $(ipt).val() )) {
+				var __file = $(ipt).get(0).files[0];
+				name = __file.name;
+
+				formData.append('files[]', __file);
+			}
+
+			lampirans[idx_lampirans] = {
+				'id' : $(ipt).closest('label').attr('data-idnama'),
+				'name' : name,
+				'sha1' : $(ipt).attr('data-sha1'),
+				'key' : key,
+				'old' : $(ipt).data('old')
+			};
+
+			idx_lampirans++;
+		});
+
+		$.map( $(div_action).find('tr.detail_rekening'), function(tr) {
+			var nama_bank = $(tr).find('input[name=bank_rekening]').val();
+			var nomer_rekening = $(tr).find('input[name=rekening_plg]').val();
+
+			var key = 'BANK_'+nama_bank+'_'+nomer_rekening;
+
+			var ipt = $(tr).find('input:file');
+			var name = null;
+
+			if (!empty( $(ipt).val() )) {
+				var __file = $(ipt).get(0).files[0];
+				name = __file.name;
+
+				formData.append('files[]', __file);
+			}
+
+			lampirans[idx_lampirans] = {
+				'id' : $(ipt).closest('label').attr('data-idnama'),
+				'name' : name,
+				'sha1' : $(ipt).attr('data-sha1'),
+				'key' : key,
+				'old' : $(ipt).data('old')
+			};
+
+			idx_lampirans++;
+		});
+
+		var data = {
+			'id': id,
+			'lampirans': lampirans,
+			'idx_upload': idxUploadFile
+		};
+		formData.append('data', JSON.stringify(data));
 
 		$.ajax({
-			url :'parameter/Pelanggan/edit',
+			url :'parameter/Pelanggan/uploadFile',
 			type : 'post',
 			data : formData,
 			beforeSend : function(){
 				showLoading();
 			},
 			success : function(data){
-				hideLoading();
-				if(data.status){
-					bootbox.alert(data.message,function() {
-						plg.getLists();
-						plg.load_form(data.content.id);
-					});
+				if(data.status == 1){
+					if ( idxUploadFile < lampirans.length ) {
+						idxUploadFile++;
+
+						plg.uploadFile(id);
+					} else {
+						hideLoading();
+						bootbox.alert(data.message,function() {
+							plg.getLists();
+							plg.load_form(data.content.id);
+
+							idxUploadFile = 0;
+						});
+					}
 				}else{
+					hideLoading();
 					bootbox.alert(data.message);
 				}
 			},
 			contentType : false,
 			processData : false,
 		});
-	}, // end - executeEdit
+	}, // end - uploadFile
 
 	non_aktif : function (tipe = null) {
 		var div_tab_pane = $('div.tab-pane');
