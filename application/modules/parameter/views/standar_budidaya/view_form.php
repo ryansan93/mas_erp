@@ -114,8 +114,12 @@
 		<p>
 			<b>Keterangan : </b>
 			<?php
-				foreach ($v_data['logs'] as $log) {
-					$temp[] = '<li class="list">' . $log['deskripsi'] . ' pada ' . dateTimeFormat( $log['waktu'] ) . '</li>';
+				if ( isset($v_data['logs']) && !empty($v_data['logs']) ) {
+					foreach ($v_data['logs'] as $log) {
+						$temp[] = '<li class="list">' . $log['deskripsi'] . ' pada ' . dateTimeFormat( $log['waktu'] ) . '</li>';
+					}
+				} else {
+					$temp[] = '<li class="list">-</li>';
 				}
 				if ($temp) {
 					echo '<ul>' . implode("", $temp) . '</ul>';

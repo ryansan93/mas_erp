@@ -30,8 +30,13 @@
 		<td>
 			<div class="col-sm-10 no-padding">
 				<?php 
-					$last_log = $val['logs'][ count($val['logs']) - 1 ];
-					$keterangan = $last_log['deskripsi'] . ' pada ' . dateTimeFormat( $last_log['waktu'] );
+					if ( isset($val['logs']) && !empty($val['logs']) ) {
+						$last_log = $val['logs'][ count($val['logs']) - 1 ];
+						$keterangan = $last_log['deskripsi'] . ' pada ' . dateTimeFormat( $last_log['waktu'] );
+					} else {
+						$keterangan = '-';
+					}
+					
 					echo $keterangan;
 				?>
 			</div>

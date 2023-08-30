@@ -70,11 +70,16 @@
 											<td><?php echo $val['nomor']; ?></td>
 											<td>
 												<div class="col-sm-10 no-padding">
-													<?php 
+												<?php 
+													if ( isset($val['logs']) && !empty($val['logs']) ) {
 														$last_log = $val['logs'][ count($val['logs']) - 1 ];
 														$keterangan = $last_log['deskripsi'] . ' pada ' . dateTimeFormat( $last_log['waktu'] );
-														echo $keterangan;
-													?>
+													} else {
+														$keterangan = '-';
+													}
+													
+													echo $keterangan;
+												?>
 												</div>
 												<div class="col-sm-1 no-padding">
 													<?php if ( $akses['a_edit'] == 1 ){ ?>
