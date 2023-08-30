@@ -2917,6 +2917,7 @@ class MutasiStok extends Public_Controller {
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['kode'] = $v_dst['kode_trans'];
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['ke'] = $v_dst['ke'];
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['tgl_trans'] = $tanggal;
+                                        $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['tgl_stok'] = $v_ds['tgl_trans'];
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['masuk'] = 0;
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['keluar'] = $v_dst['jumlah'];
                                         $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $tanggal ]['keluar'][ $key_keluar ]['stok_akhir'] = $data[ $v_ds['kode_gudang'] ]['detail'][ $key_brg ]['detail'][ $v_ds['tgl_trans'] ]['masuk'][ $key_masuk ]['masuk'] - $v_dst['jumlah'];

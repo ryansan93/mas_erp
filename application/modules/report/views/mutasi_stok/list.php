@@ -2,7 +2,7 @@
 	<?php foreach ($data as $k_detail => $v_detail): ?>
 		<tbody>
 			<tr>
-				<td colspan="12" style="background-color: #ededed;"><b><?php echo $v_detail['nama']; ?></b></td>
+				<td colspan="13" style="background-color: #ededed;"><b><?php echo $v_detail['nama']; ?></b></td>
 			</tr>
 		</tbody>
 		<?php $urut_item = 0; ?>
@@ -35,6 +35,7 @@
 									<td class="text-center" rowspan="<?php echo $rowspan_tanggal; ?>"><?php echo strtoupper(tglIndonesia($v_masuk['tgl_trans'], '-', ' ')); ?></td>
 									<?php $idx_tgl++; ?>
 								<?php endif ?>
+								<td class="text-center"><?php echo strtoupper(tglIndonesia($v_masuk['tgl_trans'], '-', ' ')); ?></td>
 								<td>Masuk</td>
 								<td>
 									<?php if ( stristr($v_masuk['jenis_trans'], 'order') === false ): ?>
@@ -70,6 +71,7 @@
 									<td class="text-center" rowspan="<?php echo $rowspan_tanggal; ?>"><?php echo strtoupper(tglIndonesia($v_keluar['tgl_trans'], '-', ' ')); ?></td>
 									<?php $idx_tgl++; ?>
 								<?php endif ?>
+								<td class="text-center"><?php echo strtoupper(tglIndonesia($v_keluar['tgl_stok'], '-', ' ')); ?></td>
 								<td>Keluar</td>
 								<td>
 									<?php echo $v_keluar['kode']; ?>
