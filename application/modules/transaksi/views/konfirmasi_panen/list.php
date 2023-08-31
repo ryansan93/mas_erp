@@ -1,4 +1,4 @@
-<?php if ( count($data) > 0 ): ?>
+<?php if ( !empty($data) && count($data) > 0 ): ?>
 	<?php foreach ($data as $k_data => $v_data): ?>
 		<?php 
 			// $tgl_panen = '-';
