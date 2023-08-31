@@ -91,7 +91,7 @@ class KonfirmasiPanen extends Public_Controller {
 
         $id = trim($params['id']);
 
-        if ( empty($id) ) {
+        if ( $edit == 0 ) {
             $html = $this->load->view('transaksi/konfirmasi_panen/add_form', $content);
         } else {
             $html = $this->load->view('transaksi/konfirmasi_panen/detail_form', $content);
