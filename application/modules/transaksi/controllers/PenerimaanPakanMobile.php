@@ -347,7 +347,7 @@ class PenerimaanPakanMobile extends Public_Controller {
         }
 
         $end_date = date('Y-m-d').' 23:59:59.999';
-        $start_date = prev_date(date('Y-m-d'), 60).' 00:00:00.000';
+        $start_date = prev_date(date('Y-m-d'), 120).' 00:00:00.000';
 
         $m_kp = new \Model\Storage\KirimPakan_model();
         $sql = "
@@ -416,7 +416,7 @@ class PenerimaanPakanMobile extends Public_Controller {
         $nomor_mitra = $this->input->post('params');
 
         $end_date = date('Y-m-d').' 00:00:00.000';
-        $start_date = prev_date(date('Y-m-d'), 60).' 23:59:59.999';
+        $start_date = prev_date(date('Y-m-d'), 120).' 23:59:59.999';
 
         $m_mm = new \Model\Storage\MitraMapping_model();
         $d_mm = $m_mm->select('nim')->where('nomor', $nomor_mitra)->get()->toArray();
