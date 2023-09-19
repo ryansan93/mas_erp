@@ -1053,7 +1053,12 @@ class TSDRHPP extends Public_Controller {
                         $m_sk = new \Model\Storage\SapronakKesepakatan_model();
                         $__d_sk = $m_sk->whereIn('id', $d_hbi)->first();
                         $_d_sk = $m_sk->where('nomor', $__d_sk->nomor)->orderBy('id', 'desc')->first();
-                        $_d_sk_tgl = $m_sk->where('id', $_d_sk->id)->where('pola', $_d_sk->pola)->where('item_pola', $_d_sk->item_pola)->where('mulai', '<=', $d_od['terima_doc']['datang'])->where('note', 'like', '%'.$_d_sk->note.'%')->orderBy('mulai', 'desc')->first();
+                        $_d_sk_tgl = $m_sk->where('id', $_d_sk->id)
+                                          ->where('pola', $_d_sk->pola)
+                                          ->where('item_pola', $_d_sk->item_pola)
+                                        //   ->where('mulai', '<=', $d_od['terima_doc']['datang'])
+                                          ->where('note', 'like', '%'.$_d_sk->note.'%')
+                                          ->orderBy('mulai', 'desc')->first(); 
 
                         $d_sk = null;
                         if ( $_d_sk_tgl ) {
@@ -1108,7 +1113,7 @@ class TSDRHPP extends Public_Controller {
 
                 $harga_kontrak_doc_peternak = 0;
                 $harga_kontrak_doc_supplier = 0;
-                if ( count($harga_sapronak) > 0 ) {
+                if ( !empty($harga_sapronak) && count($harga_sapronak) > 0 ) {
                     foreach ($harga_sapronak as $k_hs => $v_hs) {
                         foreach ($v_hs['detail'] as $k_det => $v_det) {
                             if ( $v_det['kode_brg'] == $d_od['item'] ) {
@@ -1179,7 +1184,7 @@ class TSDRHPP extends Public_Controller {
                     foreach ($v_kp['detail'] as $k_kpd => $v_kpd) {
                         $harga_kontrak_pakan_peternak = 0;
                         $harga_kontrak_pakan_supplier = 0;
-                        if ( count($harga_sapronak) > 0 ) {
+                        if ( !empty($harga_sapronak) && count($harga_sapronak) > 0 ) {
                             foreach ($harga_sapronak as $k_hs => $v_hs) {
                                 foreach ($v_hs['detail'] as $k_det => $v_det) {
                                     // cetak_r( $v_det['kode_brg'].'|'.$v_kpd['item'].' = '.$v_det['hrg_peternak'] );
