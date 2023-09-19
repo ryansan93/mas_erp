@@ -55,7 +55,7 @@ class KonfirmasiPanen extends Public_Controller {
 
         $populasi = 0;
 
-        $edit = 1;
+        $edit = 0;
         if ( !empty($d_rs) ) {
             $data = $d_rs->toArray();
             $populasi = $data['populasi'];
@@ -63,7 +63,7 @@ class KonfirmasiPanen extends Public_Controller {
             $m_drpah = new \Model\Storage\DetRpah_model();
             $d_drpah = $m_drpah->where('id_konfir', $data['data_konfir']['id'])->first();
             if ( $d_drpah ) {
-                $edit = 0;
+                $edit = 1;
             }
         }
 
