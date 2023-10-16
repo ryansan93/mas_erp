@@ -88,8 +88,7 @@
 		</thead>
 		<tbody class="list">
 			<?php foreach ($rdim_data_perwakilan_mitra as $key => $perwakilan): ?>
-				<?php if ($perwakilan['child']): ?>
-
+				<?php if (isset($perwakilan['child']) && !empty($perwakilan['child'])): ?>
 					<tr class="parent v-center" data-key="<?php echo $key ?>">
 						<th colspan="14">
 							Perwakilan <?php echo $perwakilan['parent']['nama'] . ' ( ' . implode(', ', $perwakilan['parent']['units']) . ' )' ?>

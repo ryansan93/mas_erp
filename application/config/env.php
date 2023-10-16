@@ -12,11 +12,11 @@ $config['connection'] = array(
 		'driver'    => 'sqlsrv',
 
 		// NOTE : LIVE DATABASE
-		'host'      => '103.137.111.6',
-		'port'		=> '14330',
-		'database'  => 'mas',
+		'host'      => '103.137.111.5',
+		'port'		=> '1433',
+		'database'  => 'mas_erp',
 		'username'  => 'sa',
-		'password'  => 'Mgb654321',
+		'password'  => 'Mas654321',
 
 		// NOTE : LOCAL DATABASE
 		// 'host'      => 'localhost',
