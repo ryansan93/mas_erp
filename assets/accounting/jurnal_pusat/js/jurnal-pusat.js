@@ -78,7 +78,11 @@ var jp = {
 	        newRow.find('.tujuan_coa').removeAttr('data-coa');
 	        newRow.find('.tujuan_coa label').text('-');
 
-	        $(newRow).find('#tgl_trans').datetimepicker({
+			newRow.find('div.submit_periode').addClass('hide');
+			newRow.find('div.submit_periode input').removeAttr('data-required');
+			newRow.find('div.submit_periode input').val('');
+
+	        $(newRow).find('#tgl_trans, #tgl_cn').datetimepicker({
 	            locale: 'id',
 	            format: 'DD MMM Y'
 	        });
@@ -88,6 +92,18 @@ var jp = {
 	        $.map( $(tbody).find('tr'), function(tr) {
 	            $(tr).find('select.jurnal_trans_detail').select2().on("select2:select", function (e) {
 		            jp.getSumberTujuanCoa( this, e.params.data.id );
+
+					var div_sp = $(tr).find('div.submit_periode');
+
+					var submit_periode = e.params.data.element.dataset.sp;
+					if ( submit_periode == 1 ) {
+						$(div_sp).removeClass('hide');
+						$(div_sp).find('input').attr('data-required', 1);
+					} else {
+						$(div_sp).addClass('hide');
+						$(div_sp).find('input').removeAttr('data-required');
+						$(div_sp).find('input').val('');
+					}
 		        });
 	        	$(tr).find('select.perusahaan').select2();
 	        	$(tr).find('select.unit').select2();
@@ -145,6 +161,7 @@ var jp = {
                 App.hideLoaderInContent(dcontent, html);
 
                 jp.setting_up();
+				jp.hitTotal();
 
                 if ( !empty(edit) ) {
                 	jp.getJurnalTrans();
@@ -152,6 +169,19 @@ var jp = {
             },
         });
     }, // end - loadForm
+
+	hitTotal: function() {
+		var div = $('div#action');
+
+		var total = 0;
+		$.map( $(div).find('label.nominal'), function(label) {
+			var nominal = parseFloat(numeral.unformat($(label).text()));
+
+			total += nominal;
+		});
+
+		$(div).find('label.total').text(numeral.formatDec( total ));
+	}, // end - hitTotal
 
     getJurnalTrans: function() {
     	var div = $('div#action');
@@ -168,6 +198,10 @@ var jp = {
     		$('.supplier').val('');
     		$('.supplier').attr('disabled', 'disabled');
     		$('.supplier').addClass('hide');
+
+			$('div.submit_periode').addClass('hide');
+			$('div.submit_periode').find('input').removeAttr('data-required');
+			$('div.submit_periode').find('input').val('');
     	} else {
     		$.map( $('div#action').find('table tbody tr'), function(tr) {
 	    		$(tr).find('.jurnal_trans_detail').removeAttr('disabled');
@@ -176,7 +210,29 @@ var jp = {
 
     			$(tr).find('.jurnal_trans_detail').select2().on("select2:select", function (e) {
 		            jp.getSumberTujuanCoa( this, e.params.data.id );
+
+					var div_sp = $(tr).find('div.submit_periode');
+
+					var submit_periode = e.params.data.element.dataset.sp;
+					if ( submit_periode == 1 ) {
+						$(div_sp).removeClass('hide');
+						$(div_sp).find('input').attr('data-required', 1);
+					} else {
+						$(div_sp).addClass('hide');
+						$(div_sp).find('input').removeAttr('data-required');
+						$(div_sp).find('input').val('');
+					}
 		        });
+
+				$(tr).find('#tgl_cn').datetimepicker({
+					locale: 'id',
+					format: 'DD MMM Y'
+				});
+				var tgl = $(tr).find('#tgl_cn input').data('tgl');
+	
+				if ( !empty(tgl) ) {
+					$(tr).find('#tgl_cn').data('DateTimePicker').date( moment(new Date(tgl)) );
+				}
     		});
     	}
     }, // end - getJurnalTrans
@@ -310,6 +366,7 @@ var jp = {
 							'tanggal': dateSQL($(tr).find('#tgl_trans').data('DateTimePicker').date()),
 							'det_jurnal_trans_id': $(tr).find('select.jurnal_trans_detail').select2('val'),
 							'supplier': $(tr).find('select.supplier').select2('val'),
+							'submit_periode': (!empty($(tr).find('div.submit_periode input').val())) ? dateSQL($(tr).find('#tgl_cn').data('DateTimePicker').date()) : null,
 							'sumber': $(tr).find('.sumber_coa label').text(),
 							'sumber_coa': $(tr).find('.sumber_coa').attr('data-coa'),
 							'tujuan': $(tr).find('.tujuan_coa label').text(),
@@ -385,6 +442,7 @@ var jp = {
 							'tanggal': dateSQL($(tr).find('#tgl_trans').data('DateTimePicker').date()),
 							'det_jurnal_trans_id': $(tr).find('select.jurnal_trans_detail').select2('val'),
 							'supplier': $(tr).find('select.supplier').select2('val'),
+							'submit_periode': (!empty($(tr).find('div.submit_periode input').val())) ? dateSQL($(tr).find('#tgl_cn').data('DateTimePicker').date()) : null,
 							'sumber': $(tr).find('.sumber_coa label').text(),
 							'sumber_coa': $(tr).find('.sumber_coa').attr('data-coa'),
 							'tujuan': $(tr).find('.tujuan_coa label').text(),

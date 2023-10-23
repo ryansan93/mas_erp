@@ -20,6 +20,7 @@ var tj = {
         // $('.unit').next('span.select2').css('width', '100%');
         $('.sumber').select2();
         $('.tujuan').select2();
+        $('.peruntukan').select2();
 	}, // end - setting_up
 
 	addRow: function(elm) {
@@ -120,12 +121,20 @@ var tj = {
 			bootbox.confirm('Apakah anda yakin ingin menyimpan data ?', function(result) {
 				if ( result ) {
 					var detail = $.map( $(dcontent).find('table.detail tbody tr'), function(tr) {
+						var submit_periode = 0;
+
+						var checkbox = $(tr).find('input[type=checkbox]');
+						if ( $(checkbox).prop('checked') ) {
+							submit_periode = 1;
+						}
+
 						var _detail = {
 							'nama': $(tr).find('input').val().toUpperCase(),
 							'sumber': $(tr).find('select.sumber').select2().find(':selected').data('nama'),
 							'sumber_coa': $(tr).find('select.sumber').select2('val'),
 							'tujuan': $(tr).find('select.tujuan').select2().find(':selected').data('nama'),
 							'tujuan_coa': $(tr).find('select.tujuan').select2('val'),
+							'submit_periode': submit_periode
 						};
 
 						return _detail;
@@ -143,6 +152,7 @@ var tj = {
 
 					var data = {
 						'nama': $(dcontent).find('.nama').val().toUpperCase(),
+						'peruntukan': $(dcontent).find('.peruntukan').select2().val(),
 						'detail': detail,
 						// 'sumber_tujuan': sumber_tujuan
 					};
@@ -188,12 +198,20 @@ var tj = {
 			bootbox.confirm('Apakah anda yakin ingin menyimpan data ?', function(result) {
 				if ( result ) {
 					var detail = $.map( $(dcontent).find('table.detail tbody tr'), function(tr) {
+						var submit_periode = 0;
+
+						var checkbox = $(tr).find('input[type=checkbox]');
+						if ( $(checkbox).prop('checked') ) {
+							submit_periode = 1;
+						}
+
 						var _detail = {
 							'nama': $(tr).find('input').val().toUpperCase(),
 							'sumber': $(tr).find('select.sumber').select2().find(':selected').data('nama'),
 							'sumber_coa': $(tr).find('select.sumber').select2('val'),
 							'tujuan': $(tr).find('select.tujuan').select2().find(':selected').data('nama'),
 							'tujuan_coa': $(tr).find('select.tujuan').select2('val'),
+							'submit_periode': submit_periode
 						};
 
 						return _detail;
@@ -212,6 +230,7 @@ var tj = {
 					var data = {
 						'id': $(elm).data('id'),
 						'nama': $(dcontent).find('.nama').val().toUpperCase(),
+						'peruntukan': $(dcontent).find('.peruntukan').select2().val(),
 						'detail': detail,
 						// 'sumber_tujuan': sumber_tujuan
 					};

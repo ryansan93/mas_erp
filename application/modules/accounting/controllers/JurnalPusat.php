@@ -228,10 +228,12 @@ class JurnalPusat extends Public_Controller
                                 $query->where('unit', 0)
                                       ->orWhereNull('unit');
                             })->where('mstatus', 1)->orderBy('nama', 'asc')->with(['detail', 'sumber_tujuan'])->get();
-
+                            
         $data = null;
         if ( $d_jt->count() > 0 ) {
-            $data = $d_jt->toArray();
+            $d_jt = $d_jt->toArray();
+
+            $data = $d_jt;
         }
 
         return $data;
@@ -267,7 +269,6 @@ class JurnalPusat extends Public_Controller
     {
         $params = $this->input->post('params');
 
-        // cetak_r( $params, 1 );
         try {
             $m_conf = new \Model\Storage\Conf();
             $sql = "
@@ -351,13 +352,7 @@ class JurnalPusat extends Public_Controller
 
     public function viewForm($id)
     {
-        $m_jurnal = new \Model\Storage\Jurnal_model();
-        $d_jurnal = $m_jurnal->where('id', $id)->with(['jurnal_trans', 'detail'])->first();
-
-        $data = null;
-        if ( $d_jurnal ) {
-            $data = $d_jurnal->toArray();
-        }
+        $data = $this->getData( $id );
 
         $content['data'] = $data;
         $html = $this->load->view($this->pathView . 'viewForm', $content, true);
@@ -367,15 +362,7 @@ class JurnalPusat extends Public_Controller
 
     public function editForm($id)
     {
-        $m_jurnal = new \Model\Storage\Jurnal_model();
-        $d_jurnal = $m_jurnal->where('id', $id)->with(['jurnal_trans', 'detail'])->first();
-
-        $data = null;
-        if ( $d_jurnal ) {
-            $d_jurnal = $d_jurnal->toArray();
-
-            $data = $d_jurnal;
-        }
+        $data = $this->getData( $id );
 
         $content['unit'] = $this->getUnit();
         $content['jurnal_trans'] = $this->getJurnalTrans();
@@ -385,6 +372,170 @@ class JurnalPusat extends Public_Controller
         $html = $this->load->view($this->pathView . 'editForm', $content, true);
 
         return $html;
+    }
+
+    public function getData( $id ) {
+        $m_conf = new \Model\Storage\Conf();
+        $sql = "
+            select
+                j.id,
+                j.tanggal,
+                j.unit,
+                j.jurnal_trans_id,
+                jt.nama as nama_jurnal_trans,
+                jt.kode as kode_jurnal_trans,
+                dj.id as id_detail,
+                dj.tanggal as tgl_detail,
+                dj.det_jurnal_trans_id,
+                djt.nama as nama_det_jurnal_trans,
+                dj.jurnal_trans_sumber_tujuan_id,
+                dj.supplier,
+                supl.nama as nama_supplier,
+                dj.perusahaan,
+                prs.perusahaan as nama_perusahaan,
+                dj.keterangan,
+                dj.nominal,
+                dj.saldo,
+                dj.ref_id,
+                dj.asal,
+                dj.coa_asal,
+                dj.tujuan,
+                dj.coa_tujuan,
+                dj.unit,
+                w.nama as nama_unit,
+                dj.pic,
+                dj.tbl_name,
+                dj.tbl_id,
+                dj.noreg,
+                dj.periode
+            from det_jurnal dj
+            right join
+                jurnal j
+                on
+                    dj.id_header = j.id
+            left join
+                jurnal_trans jt
+                on
+                    j.jurnal_trans_id = jt.id
+            left join
+                det_jurnal_trans djt
+                on
+                    dj.det_jurnal_trans_id = djt.id
+            left join
+                (
+                    select p1.* from perusahaan p1
+                    right join
+                        (select max(id) as id, kode from perusahaan group by kode) p2
+                        on
+                            p1.id = p2.id
+                ) prs
+                on
+                    prs.kode = dj.perusahaan
+            left join
+                (
+                    select p.* from pelanggan p
+                    right join
+                        (select max(id) as id, nomor from pelanggan p where tipe = 'supplier' and jenis <> 'ekspedisi' and mstatus = 1 group by nomor) p2
+                        on
+                            p.id = p2.id
+                ) supl
+                on
+                    supl.nomor = dj.supplier
+            left join
+                (
+                    select w1.* from wilayah w1
+                    right join
+                        (select max(id) as id, kode from wilayah group by kode) w2
+                        on
+                            w1.id = w2.id
+                ) w
+                on
+                    w.kode = dj.unit
+            where
+                j.id = ".$id."
+        ";
+        $d_conf = $m_conf->hydrateRaw( $sql );
+
+        $data = null;
+        if ( $d_conf->count() > 0 ) {
+            $d_conf = $d_conf->toArray();
+            
+            $m_conf = new \Model\Storage\Conf();
+            $sql = "
+                select jt.id from jurnal_trans jt
+                where
+                jt.kode = '".$d_conf[0]['kode_jurnal_trans']."'
+            ";
+            $d_list_id_header = $m_conf->hydrateRaw( $sql );
+            
+            $data_list_id_header = array();
+            if ( $d_list_id_header->count() > 0 ) {
+                $d_list_id_header = $d_list_id_header->toArray();
+
+                foreach ($d_list_id_header as $k_list_header => $v_list_header) {
+                    $data_list_id_header[] = $v_list_header['id'];
+                }
+            }
+
+            $data = array(
+                'id' => $d_conf[0]['id'],
+                'tanggal' => $d_conf[0]['tanggal'],
+                'unit' => $d_conf[0]['unit'],
+                'jurnal_trans_id' => $d_conf[0]['jurnal_trans_id'],
+                'nama_jurnal_trans' => $d_conf[0]['nama_jurnal_trans'],
+                'list_id' => $data_list_id_header
+            );
+            foreach ($d_conf as $key => $value) {
+                $m_conf = new \Model\Storage\Conf();
+                $sql = "
+                    select djt.id from det_jurnal_trans djt
+                    where
+                        djt.sumber_coa = '".$value['coa_asal']."' and
+                        djt.tujuan_coa = '".$value['coa_tujuan']."'
+                ";
+                $d_list_id_detail = $m_conf->hydrateRaw( $sql );
+
+                $data_list_id_detail = array();
+                if ( $d_list_id_detail->count() > 0 ) {
+                    $d_list_id_detail = $d_list_id_detail->toArray();
+
+                    foreach ($d_list_id_detail as $k_list_detail => $v_list_detail) {
+                        $data_list_id_detail[] = $v_list_detail['id'];
+                    }
+                }
+
+                $data['detail'][ $value['id_detail'] ] = array(
+                    'id' => $value['id_detail'],
+                    'id_header' => $id,
+                    'tanggal' => $value['tgl_detail'],
+                    'det_jurnal_trans_id' => $value['det_jurnal_trans_id'],
+                    'nama_det_jurnal_trans' => $value['nama_det_jurnal_trans'],
+                    'jurnal_trans_sumber_tujuan_id' => $value['jurnal_trans_sumber_tujuan_id'],
+                    'supplier' => $value['supplier'],
+                    'nama_supplier' => $value['nama_supplier'],
+                    'perusahaan' => $value['perusahaan'],
+                    'nama_perusahaan' => $value['nama_perusahaan'],
+                    'keterangan' => $value['keterangan'],
+                    'nominal' => $value['nominal'],
+                    'saldo' => $value['saldo'],
+                    'ref_id' => $value['ref_id'],
+                    'asal' => $value['asal'],
+                    'coa_asal' => $value['coa_asal'],
+                    'tujuan' => $value['tujuan'],
+                    'coa_tujuan' => $value['coa_tujuan'],
+                    'unit' => $value['unit'],
+                    'nama_unit' => $value['nama_unit'],
+                    'pic' => $value['pic'],
+                    'tbl_name' => $value['tbl_name'],
+                    'tbl_id' => $value['tbl_id'],
+                    'noreg' => $value['noreg'],
+                    'periode' => $value['periode'],
+                    'list_id' => $data_list_id_detail
+                );
+            }
+        }
+
+        return $data;
     }
 
     public function save()
@@ -415,6 +566,7 @@ class JurnalPusat extends Public_Controller
                 $m_dj->tujuan = $v_det['tujuan'];
                 $m_dj->coa_tujuan = $v_det['tujuan_coa'];
                 $m_dj->unit = $v_det['unit'];
+                $m_dj->periode = (isset($v_det['submit_periode']) && !empty($v_det['submit_periode'])) ? $v_det['submit_periode'] : null;
                 $m_dj->save();
             }
 
@@ -465,6 +617,7 @@ class JurnalPusat extends Public_Controller
                 $m_dj->tujuan = $v_det['tujuan'];
                 $m_dj->coa_tujuan = $v_det['tujuan_coa'];
                 $m_dj->unit = $v_det['unit'];
+                $m_dj->periode = (isset($v_det['submit_periode']) && !empty($v_det['submit_periode'])) ? $v_det['submit_periode'] : null;
                 $m_dj->save();
             }
 

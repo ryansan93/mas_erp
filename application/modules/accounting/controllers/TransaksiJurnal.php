@@ -170,6 +170,7 @@ class TransaksiJurnal extends Public_Controller
 
             $m_jt->kode = $kode;
             $m_jt->nama = $params['nama'];
+            $m_jt->unit = $params['peruntukan'];
             $m_jt->mstatus = 1;
             $m_jt->save();
 
@@ -182,6 +183,7 @@ class TransaksiJurnal extends Public_Controller
                 $m_djt->sumber_coa = $v_det['sumber_coa'];
                 $m_djt->tujuan = $v_det['tujuan'];
                 $m_djt->tujuan_coa = $v_det['tujuan_coa'];
+                $m_djt->submit_periode = $v_det['submit_periode'];
                 $m_djt->save();
             }
 
@@ -225,6 +227,7 @@ class TransaksiJurnal extends Public_Controller
             $m_jt = new \Model\Storage\JurnalTrans_model();
             $m_jt->kode = $d_jt->kode;
             $m_jt->nama = $params['nama'];
+            $m_jt->unit = $params['peruntukan'];
             $m_jt->mstatus = 1;
             $m_jt->save();
 
@@ -237,6 +240,7 @@ class TransaksiJurnal extends Public_Controller
                 $m_djt->sumber_coa = $v_det['sumber_coa'];
                 $m_djt->tujuan = $v_det['tujuan'];
                 $m_djt->tujuan_coa = $v_det['tujuan_coa'];
+                $m_djt->submit_periode = $v_det['submit_periode'];
                 $m_djt->save();
             }
 

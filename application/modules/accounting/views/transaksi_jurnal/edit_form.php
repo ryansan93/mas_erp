@@ -4,6 +4,16 @@
 		<input type="text" class="form-control text-left uppercase nama" data-required="1" placeholder="Nama" value="<?php echo $data['nama']; ?>" />
 	</div>
 </div>
+<div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
+	<div class="col-xs-12 no-padding"><label class="control-label text-left">Peruntukan</label></div>
+	<div class="col-xs-12 no-padding">
+		<select class="form-control peruntukan" data-required="1">
+			<option>-- Pilih --</option>
+			<option value="0" <?php echo (empty($data['unit']) || $data['unit'] == 0) ? 'selected' : ''; ?> >NON UNIT</option>
+			<option value="1" <?php echo ($data['unit'] == 1) ? 'selected' : ''; ?>>UNIT</option>
+		</select>
+	</div>
+</div>
 <div class="col-xs-12 no-padding"><hr style="margin-top: 10px; margin-bottom: 10px;"></div>
 <div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
 	<label class="control-label">Detail Transaksi</label>
@@ -14,7 +24,8 @@
 					<th class="col-xs-4">Nama</th>
 					<th class="col-xs-3">Sumber</th>
 					<th class="col-xs-3">Tujuan</th>
-					<th class="col-xs-2"></th>
+					<th class="col-xs-1 text-center">Submit Periode</th>
+					<th class="col-xs-1"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -50,6 +61,15 @@
 									<option value="<?php echo $value['coa'] ?>" data-nama="<?php echo $value['nama_coa']; ?>" <?php echo $selected; ?> ><?php echo $value['coa'].' | '.$value['nama_coa']; ?></option>
 								<?php endforeach ?>
 							</select>
+						</td>
+						<td class="text-center">
+							<?php
+								$checked = '';
+								if ( $v_det['submit_periode'] == 1 ) {
+									$checked = 'checked';
+								}
+							?>
+							<input type="checkbox" class="cursor-p submit_periode" target="check" <?php echo $checked; ?> >
 						</td>
 						<td>
 							<div class="col-xs-6 text-center no-padding">

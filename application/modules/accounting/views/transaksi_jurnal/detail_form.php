@@ -4,6 +4,12 @@
 		<label class="control-label">: <?php echo $data['nama']; ?></label>
 	</div>
 </div>
+<div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
+	<div class="col-xs-2 no-padding"><label class="control-label text-left">Peruntukan</label></div>
+	<div class="col-xs-10 no-padding">
+		<label class="control-label">: <?php echo ($data['unit'] == 1) ? 'UNIT' : 'NON UNIT'; ?></label>
+	</div>
+</div>
 <div class="col-xs-12 no-padding"><hr style="margin-top: 10px; margin-bottom: 10px;"></div>
 <div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
 	<label class="control-label">Detail Transaksi</label>
@@ -14,6 +20,7 @@
 					<th class="col-xs-4">Nama</th>
 					<th class="col-xs-3">Sumber</th>
 					<th class="col-xs-3">Tujuan</th>
+					<th class="col-xs-2 text-center">Submit Periode</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -27,6 +34,13 @@
 						</td>
 						<td>
 							<?php echo $v_det['tujuan_coa'].' | '.$v_det['tujuan']; ?>
+						</td>
+						<td class="text-center">
+							<?php if ( $v_det['submit_periode'] == 1 ) { ?>
+								<i class="fa fa-check"></i>
+							<?php } else { ?>
+								<i class="fa fa-minus"></i>
+							<?php } ?>
 						</td>
 					</tr>
 				<?php endforeach ?>

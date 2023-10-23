@@ -51,7 +51,7 @@
 										<option value="">-- Pilih --</option>
 										<?php foreach ($jurnal_trans as $k_jt => $v_jt): ?>
 											<?php foreach ($v_jt['detail'] as $k_det => $v_det): ?>
-												<option value="<?php echo $v_det['id']; ?>" data-idheader="<?php echo $v_jt['id']; ?>" > <?php echo strtoupper($v_det['nama']); ?> </option>
+												<option value="<?php echo $v_det['id']; ?>" data-idheader="<?php echo $v_jt['id']; ?>" data-sp="<?php echo $v_det['submit_periode']; ?>" > <?php echo strtoupper($v_det['nama']); ?> </option>
 											<?php endforeach ?>
 										<?php endforeach ?>
 									</select>
@@ -89,6 +89,17 @@
 											<option value="<?php echo $v_supl['nomor']; ?>"> <?php echo strtoupper($v_supl['nama']); ?> </option>
 										<?php endforeach ?>
 									</select>
+								</div>
+							</div>
+							<div class="col-xs-12 no-padding submit_periode hide">
+								<div class="col-xs-12 no-padding"><label class="control-label">Periode CN</label></div>
+								<div class="col-xs-12 no-padding">
+									<div class="input-group date" id="tgl_cn">
+										<input type="text" class="form-control text-center" placeholder="Tanggal" />
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>

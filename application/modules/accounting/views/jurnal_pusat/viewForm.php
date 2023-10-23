@@ -6,7 +6,13 @@
 <div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
 	<div class="col-xs-1 no-padding"><label class="control-label">Transaksi</label></div>
 	<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
-	<div class="col-xs-10 no-padding"><label class="control-label"><?php echo strtoupper($data['jurnal_trans']['nama']); ?></label></div>
+	<div class="col-xs-10 no-padding"><label class="control-label"><?php echo strtoupper($data['nama_jurnal_trans']); ?></label></div>
+	<!-- <div class="col-xs-10 no-padding"><label class="control-label"><?php echo strtoupper($data['jurnal_trans']['nama']); ?></label></div> -->
+</div>
+<div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
+	<div class="col-xs-1 no-padding"><label class="control-label">Total</label></div>
+	<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
+	<div class="col-xs-10 no-padding"><label class="control-label total">0</label></div>
 </div>
 <div class="col-xs-12 no-padding" style="margin-bottom: 5px;">
 	<small>
@@ -28,12 +34,12 @@
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-2 no-padding"><label class="control-label">Detail Transaksi</label></div>
 								<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
-								<div class="col-xs-9 no-padding"><label class="control-label"><?php echo strtoupper($v_det['jurnal_trans_detail']['nama']); ?></label></div>
+								<div class="col-xs-9 no-padding"><label class="control-label"><?php echo strtoupper($v_det['nama_det_jurnal_trans']); ?></label></div>
 							</div>
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-2 no-padding"><label class="control-label">Perusahaan</label></div>
 								<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
-								<div class="col-xs-9 no-padding"><label class="control-label"><?php echo strtoupper($v_det['d_perusahaan']['perusahaan']); ?></label></div>
+								<div class="col-xs-9 no-padding"><label class="control-label"><?php echo strtoupper($v_det['nama_perusahaan']); ?></label></div>
 							</div>
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-2 no-padding"><label class="control-label">Rek Asal</label></div>
@@ -49,7 +55,14 @@
 								<div class="col-xs-12 no-padding">
 									<div class="col-xs-2 no-padding"><label class="control-label" style="color: red;">Supplier</label></div>
 									<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
-									<div class="col-xs-9 no-padding tujuan_coa"><label class="control-label"><?php echo strtoupper($v_det['d_supplier']['nama']); ?></label></div>
+									<div class="col-xs-9 no-padding tujuan_coa"><label class="control-label"><?php echo strtoupper($v_det['nama_supplier']); ?></label></div>
+								</div>
+							<?php endif ?>
+							<?php if ( !empty($v_det['periode']) ): ?>
+								<div class="col-xs-12 no-padding">
+									<div class="col-xs-2 no-padding"><label class="control-label">Periode CN</label></div>
+									<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
+									<div class="col-xs-9 no-padding tgl_cn"><label class="control-label"><?php echo strtoupper(tglIndonesia($v_det['periode'], '-', ' ', true)); ?></label></div>
 								</div>
 							<?php endif ?>
 							<div class="col-xs-12 no-padding">
@@ -58,7 +71,7 @@
 								<?php
 									$unit = null;
 									if ( !empty($v_det['d_unit']) ) {
-										$unit = str_replace('kab ', '', $v_det['d_unit']['nama']);
+										$unit = str_replace('kab ', '', $v_det['nama_unit']);
 						            	$unit = str_replace('kota ', '', $unit);
 									} else {
 										$unit = strtoupper($v_det['unit']);
@@ -69,7 +82,7 @@
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-2 no-padding"><label class="control-label">Nominal</label></div>
 								<div class="col-xs-1 no-padding text-center" style="max-width: 2%;"><label class="control-label">:</label></div>
-								<div class="col-xs-9 no-padding"><label class="control-label"><?php echo angkaDecimal($v_det['nominal']); ?></label></div>
+								<div class="col-xs-9 no-padding"><label class="control-label nominal"><?php echo angkaDecimal($v_det['nominal']); ?></label></div>
 							</div>
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-2 no-padding"><label class="control-label">Keterangan</label></div>

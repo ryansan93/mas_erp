@@ -17,9 +17,12 @@
 			<?php foreach ($jurnal_trans as $k_jt => $v_jt): ?>
 				<?php
 					$selected = null;
-					if ( $v_jt['id'] == $data['jurnal_trans_id'] ) {
+					if ( in_array($v_jt['id'], $data['list_id']) ) {
 						$selected = 'selected';
 					}
+					// if ( $v_jt['id'] == $data['jurnal_trans_id'] ) {
+					// 	$selected = 'selected';
+					// }
 				?>
 				<option value="<?php echo $v_jt['id']; ?>" <?php echo $selected; ?> > <?php echo strtoupper($v_jt['nama']); ?> </option>
 			<?php endforeach ?>
@@ -60,11 +63,14 @@
 												<?php foreach ($v_jt['detail'] as $k_jtd => $v_jtd): ?>
 													<?php
 														$selected = null;
-														if ( $v_jtd['id'] == $v_det['det_jurnal_trans_id'] ) {
+														if ( in_array($v_jtd['id'], $v_det['list_id']) ) {
 															$selected = 'selected';
 														}
+														// if ( $v_jtd['id'] == $v_det['det_jurnal_trans_id'] ) {
+														// 	$selected = 'selected';
+														// }
 													?>
-													<option value="<?php echo $v_jtd['id']; ?>" data-idheader="<?php echo $v_jt['id']; ?>" <?php echo $selected; ?> > <?php echo strtoupper($v_jtd['nama']); ?> </option>
+													<option value="<?php echo $v_jtd['id']; ?>" data-idheader="<?php echo $v_jt['id']; ?>" data-sp="<?php echo $v_jtd['submit_periode']; ?>" <?php echo $selected; ?> > <?php echo strtoupper($v_jtd['nama']); ?> </option>
 												<?php endforeach ?>
 											<?php endforeach ?>
 										</select>
@@ -99,24 +105,43 @@
 								<div class="col-xs-10 no-padding tujuan_coa" data-coa="<?php echo $v_det['coa_tujuan'] ?>"><label class="control-label"><?php echo $v_det['tujuan']; ?></label></div>
 							</div>
 							<div class="col-xs-12 no-padding">
-							<div class="col-xs-12 no-padding">
-								<div class="col-xs-12 no-padding"><label class="control-label" style="color: red;">Supplier (Isi untuk transaksi CN)</label></div>
 								<div class="col-xs-12 no-padding">
-									<select class="form-control supplier">
-										<option value="">-- Pilih Supplier --</option>
-										<?php foreach ($supplier as $k_supl => $v_supl): ?>
-											<?php
-												$selected = null;
-												if ( $v_supl['nomor'] == $v_det['supplier'] ) {
-													$selected = 'selected';
-												}
-											?>
-											<option value="<?php echo $v_supl['nomor']; ?>" <?php echo $selected; ?> > <?php echo strtoupper($v_supl['nama']); ?> </option>
-										<?php endforeach ?>
-									</select>
+									<div class="col-xs-12 no-padding"><label class="control-label" style="color: red;">Supplier (Isi untuk transaksi CN)</label></div>
+									<div class="col-xs-12 no-padding">
+										<select class="form-control supplier">
+											<option value="">-- Pilih Supplier --</option>
+											<?php foreach ($supplier as $k_supl => $v_supl): ?>
+												<?php
+													$selected = null;
+													if ( $v_supl['nomor'] == $v_det['supplier'] ) {
+														$selected = 'selected';
+													}
+												?>
+												<option value="<?php echo $v_supl['nomor']; ?>" <?php echo $selected; ?> > <?php echo strtoupper($v_supl['nama']); ?> </option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+								<?php
+									$hide = 'hide';
+									$data_required = 0;
+									if ( !empty($v_det['periode']) ) {
+										$hide = null;
+										$data_required = 1;
+									}
+								?>
+								<div class="col-xs-12 no-padding submit_periode <?php echo $hide; ?>">
+									<div class="col-xs-12 no-padding"><label class="control-label">Periode CN</label></div>
+									<div class="col-xs-12 no-padding">
+										<div class="input-group date" id="tgl_cn">
+											<input type="text" class="form-control text-center" placeholder="Tanggal" data-required="<?php echo $data_required; ?>" data-tgl="<?php echo $v_det['periode']; ?>" />
+											<span class="input-group-addon">
+												<span class="glyphicon glyphicon-calendar"></span>
+											</span>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
 							<div class="col-xs-12 no-padding">
 								<div class="col-xs-6 no-padding" style="padding-right: 5px;">
 									<div class="col-xs-12 no-padding"><label class="control-label">Unit</label></div>
@@ -148,7 +173,8 @@
 								<div class="col-xs-12 no-padding"><label class="control-label">Keterangan</label></div>
 								<div class="col-xs-12 no-padding">
 									<textarea class="form-control keterangan" data-required="1" placeholder="Keterangan">
-										<?php echo $v_det['keterangan']; ?>
+										<?php echo ltrim(rtrim($v_det['keterangan'])); ?>
+										<?php // echo trim(str_replace(["\n","\r","\t"], '', $v_det['keterangan'])); ?>
 									</textarea>
 								</div>
 							</div>
