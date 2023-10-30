@@ -811,7 +811,7 @@ class LHK extends Public_Controller
 
             // Renames the directory
             if ( is_dir($old_dir_name) ) {
-                rename($old_dir_name, $new_dir_name);
+                renameWin($old_dir_name, $new_dir_name);
             }
 
             if ( is_dir( $new_dir_name ) ) {
@@ -837,7 +837,7 @@ class LHK extends Public_Controller
 
             // Renames the directory
             if ( is_dir($old_dir_name) ) {
-                rename($old_dir_name, $new_dir_name);
+                renameWin($old_dir_name, $new_dir_name);
             }
 
             if ( is_dir( $new_dir_name ) ) {
@@ -882,7 +882,7 @@ class LHK extends Public_Controller
 
                     // Renames the directory
                     if ( is_dir($old_dir_name) ) {
-                        rename($old_dir_name, $new_dir_name);
+                        renameWin($old_dir_name, $new_dir_name);
                     }
 
                     if ( is_dir( $new_dir_name ) ) {
@@ -1124,8 +1124,13 @@ class LHK extends Public_Controller
                     $new_dir_name = "uploads/LHK/NEKROPSI/".$new_folder_name;
 
                     // Renames the directory
-                    if ( is_dir($old_dir_name) ) {
-                        rename($old_dir_name, $new_dir_name);
+                    if ( is_dir($old_dir_name) && !is_dir($new_dir_name)) {
+                        renameWin($old_dir_name, $new_dir_name);
+                    } else {
+                        // shell_exec("cp -r $old_dir_name $new_dir_name");
+                        // deleteDirectory($old_dir_name);
+                        copyDiectory($old_dir_name, $new_dir_name);
+                        deleteDirectory($old_dir_name);
                     }
 
                     if ( is_dir( $new_dir_name ) ) {

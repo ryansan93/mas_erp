@@ -381,8 +381,7 @@ var lhk = {
 
 		var files = $(elm)[0].files;
 
-		showLoading('Upload Foto . . .');
-		$("#myNekropsi").modal('hide');
+		// $("#myNekropsi").modal('hide');
 
 		ci.compress(files, 480, function(_data) {
 			for (var i = 0; i < _data.length; i++) {
@@ -408,7 +407,7 @@ var lhk = {
 				processData: false,
 				contentType: false,
 				data: formData,
-				beforeSend: function() {},
+				beforeSend: function() { showLoading('Upload Foto . . .'); },
 				success: function(data) {
 					hideLoading();
 
