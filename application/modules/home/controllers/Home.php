@@ -71,9 +71,15 @@ class Home extends Public_Controller
 					on 
 						td1.id = td.id 
 				left join
-					order_doc od 
+					(
+						select od1.* from order_doc od1
+						right join
+							(select max(id) as id, no_order from order_doc group by no_order) od2
+							on
+								od1.id = od2.id
+					) od 
 					on
-						td.no_order = od.no_order 
+						td.no_order = od.no_order
 				where
 					td.datang BETWEEN '".$first_date."' and '".$end_date."' and
 					od.no_order is not null
