@@ -3,7 +3,7 @@
 		<?php if ( !empty($formDashboardDirut) ): ?>
 			<?php echo $formDashboardDirut; ?>
 		<?php else: ?>
-			<h1>MITRA GEMUK BERSAMA</h1>
+			<h1>MULTI ADHIKA SEJAHTERA</h1>
 		<?php endif ?>
 	</div>
 </div>
