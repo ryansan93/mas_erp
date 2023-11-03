@@ -1136,3 +1136,72 @@ if (! function_exists ( 'exDecrypt' )) {
       return encrypt_decrypt('decrypt', $str);
   }
 }
+
+if (! function_exists ( 'renameWin' )) {
+  function renameWin($oldfile,$newfile) {
+    if (!rename($oldfile,$newfile)) {
+        if (copy ($oldfile,$newfile)) {
+            unlink($oldfile);
+            return TRUE;
+        }
+        return FALSE;
+    }
+    return TRUE;
+  }
+}
+
+if (! function_exists ( 'deleteDirectory' )) {
+  function deleteDirectory($dir) {
+    if (!file_exists($dir)) {
+        return true;
+    }
+
+    if (!is_dir($dir)) {
+        return unlink($dir);
+    }
+
+    foreach (scandir($dir) as $item) {
+        if ($item == '.' || $item == '..') {
+            continue;
+        }
+
+        if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+            return false;
+        }
+
+    }
+
+    return rmdir($dir);
+  }
+}
+
+if (! function_exists ( 'copyDiectory' )) {
+  function copyDiectory($src, $dst) {  
+    
+    // open the source directory 
+    $dir = opendir($src);  
+
+    // Make the destination directory if not exist 
+    @mkdir($dst);  
+
+    // Loop through the files in source directory 
+    while( $file = readdir($dir) ) {  
+
+        if (( $file != '.' ) && ( $file != '..' )) {  
+            if ( is_dir($src . '/' . $file) )  
+            {  
+
+                // Recursively calling custom copy function 
+                // for sub directory  
+                copyDiectory($src . '/' . $file, $dst . '/' . $file);  
+
+            }  
+            else {  
+                copy($src . '/' . $file, $dst . '/' . $file);  
+            }  
+        }  
+    }  
+
+    closedir($dir); 
+  }
+}
