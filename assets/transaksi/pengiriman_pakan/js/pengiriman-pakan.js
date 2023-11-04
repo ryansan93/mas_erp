@@ -352,10 +352,10 @@ var pp = {
 						}
 						option += '<option value="'+data.content[i].noreg+'" '+selected+'>'+data.content[i].kode_unit.toUpperCase()+' | '+data.content[i].tgl_terima+' | '+data.content[i].nama.toUpperCase()+' ('+data.content[i].noreg.toUpperCase()+')</option>';
 
-						idx++;
 						if ( idx == data.content.length ) {
 							hideLoading();
 						}
+						idx++;
 					}
 				} else {
 					hideLoading();
