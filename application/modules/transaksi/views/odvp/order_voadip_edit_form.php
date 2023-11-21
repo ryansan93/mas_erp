@@ -69,12 +69,12 @@
 								<th class="col-sm-1 text-center" rowspan="2">Jumlah</th>
 								<th class="col-sm-1 text-center" rowspan="2">Total Beli</th>
 								<th class="col-sm-1 text-center" rowspan="2">Tgl Kirim</th>
-								<th class="text-center" colspan="2">Kirim</th>
+								<th class="text-center" colspan="1">Kirim</th>
 								<th class="text-center hide" rowspan="2">Alamat</th>
 							</tr>
 							<tr class="v-center">
 								<th class="col-sm-1 text-center">Gudang</th>
-								<th class="col-sm-1 text-center">Peternak</th>
+								<th class="col-sm-1 text-center hide">Peternak</th>
 							</tr>
 						</thead>
 						<tbody class="list">
@@ -149,7 +149,7 @@
 											<?php endforeach ?>
 										</select>
 									</td>
-									<td>
+									<td class="hide">
 										<select class="form-control peternak" data-jenis="peternak" <?php echo ($v_detail['kirim_ke'] == 'peternak') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
 											<option value="">-- Pilih Peternak --</option>
 											<?php foreach ($peternak as $k_peternak => $v_peternak): ?>

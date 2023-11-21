@@ -919,7 +919,7 @@ class PenerimaanVoadip extends Public_Controller {
 
                 $this->result['status'] = 1;
                 $this->result['content'] = array(
-                    'id' => $d_terima_voadip->id,
+                    'id' => $id_header,
                     'tanggal' => $tgl_trans,
                     'delete' => 0,
                     'message' => 'Data Penerimaan Voadip berhasil di ubah.',

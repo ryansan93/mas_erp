@@ -58,12 +58,12 @@
 								<th class="col-xs-1 text-center" rowspan="2">Jumlah</th>
 								<th class="col-xs-1 text-center" rowspan="2">Total Beli</th>
 								<th class="col-xs-1 text-center" rowspan="2">Tgl Kirim</th>
-								<th class="text-center" colspan="2">Kirim</th>
+								<th class="text-center" colspan="1">Kirim</th>
 								<th class="text-center hide" rowspan="2">Alamat</th>
 							</tr>
 							<tr class="v-center">
 								<th class="col-xs-1 text-center">Gudang</th>
-								<th class="col-xs-2 text-center">Peternak</th>
+								<th class="col-xs-2 text-center hide">Peternak</th>
 							</tr>
 						</thead>
 						<tbody class="list">
@@ -105,7 +105,7 @@
 											}
 										?>
 									</td>
-									<td>
+									<td class="hide">
 										<?php
 											if ( $v_detail['kirim_ke'] == 'peternak' ) {
 												echo $v_detail['kirim'];
