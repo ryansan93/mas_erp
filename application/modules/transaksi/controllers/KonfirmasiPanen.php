@@ -127,51 +127,56 @@ class KonfirmasiPanen extends Public_Controller {
         if ( $d_rs->count() > 0 ) {
             $d_rs = $d_rs->toArray();
             foreach ($d_rs as $k => $v_rs) {
-                $kdg = $v_rs['d_kandang'];
-                if ( $d_wilayah['kode'] == $kdg['d_unit']['kode'] ) {
-                    $m_mm = new \Model\Storage\MitraMapping_model();
-                    $d_mm = $m_mm->where('nim', $v_rs['nim'])->orderBy('id', 'desc')->first();
+                $m_ts = new \Model\Storage\TutupSiklus_model();
+                $d_ts = $m_ts->where('noreg', $v_rs['noreg'])->first();
 
-                    $nama_mitra = null;
-                    if ( $d_mm ) {
-                        $m_mitra = new \Model\Storage\Mitra_model();
-                        $d_mitra = $m_mitra->where('id', $d_mm->mitra)->orderBy('id', 'desc')->first();
+                if ( !$d_ts ) {
+                    $kdg = $v_rs['d_kandang'];
+                    if ( $d_wilayah['kode'] == $kdg['d_unit']['kode'] ) {
+                        $m_mm = new \Model\Storage\MitraMapping_model();
+                        $d_mm = $m_mm->where('nim', $v_rs['nim'])->orderBy('id', 'desc')->first();
 
-                        $nama_mitra = $d_mitra->nama;
+                        $nama_mitra = null;
+                        if ( $d_mm ) {
+                            $m_mitra = new \Model\Storage\Mitra_model();
+                            $d_mitra = $m_mitra->where('id', $d_mm->mitra)->orderBy('id', 'desc')->first();
+
+                            $nama_mitra = $d_mitra->nama;
+                        }
+
+                        $populasi = $v_rs['populasi'];
+
+                        $m_conf = new \Model\Storage\Conf();
+                        $sql = "
+                            select
+                                td.jml_ekor
+                            from order_doc od
+                            right join
+                                terima_doc td
+                                on
+                                    od.no_order = td.no_order
+                            where
+                                od.noreg = '".$v_rs['noreg']."'
+                        ";
+                        $d_terima = $m_conf->hydrateRaw( $sql );
+                        if ( $d_terima->count() > 0 ) {
+                            $populasi = $d_terima->toArray()[0]['jml_ekor'];
+                        }
+
+                        // $data[$v_rs['id']] = $v_rs;
+                        $data[$v_rs['id']] = array(
+                            'id' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['id'] : null,
+                            'tgl_panen' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['tgl_panen'] : null,
+                            'total' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['total'] : null,
+                            'bb_rata2' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['bb_rata2'] : null,
+                            'tgl_docin' => tglIndonesia($v_rs['tgl_docin'], '-', ' '),
+                            'noreg' => $v_rs['noreg'],
+                            'nama' => $nama_mitra,
+                            'populasi' => angkaRibuan($populasi),
+                            'kandang' => $v_rs['d_kandang']['kandang'],
+                            'unit' => $d_wilayah['kode'],
+                        );
                     }
-
-                    $populasi = $v_rs['populasi'];
-
-                    $m_conf = new \Model\Storage\Conf();
-                    $sql = "
-                        select
-                            td.jml_ekor
-                        from order_doc od
-                        right join
-                            terima_doc td
-                            on
-                                od.no_order = td.no_order
-                        where
-                            od.noreg = '".$v_rs['noreg']."'
-                    ";
-                    $d_terima = $m_conf->hydrateRaw( $sql );
-                    if ( $d_terima->count() > 0 ) {
-                        $populasi = $d_terima->toArray()[0]['jml_ekor'];
-                    }
-
-                    // $data[$v_rs['id']] = $v_rs;
-                    $data[$v_rs['id']] = array(
-                        'id' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['id'] : null,
-                        'tgl_panen' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['tgl_panen'] : null,
-                        'total' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['total'] : null,
-                        'bb_rata2' => !empty($v_rs['data_konfir']) ? $v_rs['data_konfir']['bb_rata2'] : null,
-                        'tgl_docin' => tglIndonesia($v_rs['tgl_docin'], '-', ' '),
-                        'noreg' => $v_rs['noreg'],
-                        'nama' => $nama_mitra,
-                        'populasi' => angkaRibuan($populasi),
-                        'kandang' => $v_rs['d_kandang']['kandang'],
-                        'unit' => $d_wilayah['kode'],
-                    );
                 }
             }
         }

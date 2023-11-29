@@ -195,7 +195,7 @@ class RPAH extends Public_Controller {
                 $m_ts = new \Model\Storage\TutupSiklus_model();
                 $d_ts = $m_ts->where('noreg', $v_rs['noreg'])->first();
 
-                if ( empty($d_ts) ) {
+                if ( !$d_ts ) {
                     $m_lhk = new \Model\Storage\Lhk_model();
                     $d_lhk = $m_lhk->where('noreg', $v_rs['noreg'])->orderBy('umur', 'desc')->first();
 

@@ -343,7 +343,7 @@ class KonfirmasiPanenMobile extends Public_Controller {
                 $m_ts = new \Model\Storage\TutupSiklus_model();
                 $d_ts = $m_ts->where('noreg', $v_rs['noreg'])->first();
 
-                if ( empty($d_ts) ) {
+                if ( !$d_ts ) {
                     $m_od = new \Model\Storage\OrderDoc_model();
                     $d_od = $m_od->where('noreg', $v_rs['noreg'])->first();
 

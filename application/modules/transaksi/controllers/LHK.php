@@ -381,7 +381,7 @@ class LHK extends Public_Controller
                 $m_ts = new \Model\Storage\TutupSiklus_model();
                 $d_ts = $m_ts->where('noreg', $v_rs['noreg'])->first();
 
-                // if ( empty($d_ts) ) {
+                if ( empty($d_ts) ) {
                     $m_lhk = new \Model\Storage\Lhk_model();
                     $d_lhk = $m_lhk->where('noreg', $v_rs['noreg'])->orderBy('umur', 'desc')->first();
 
@@ -409,7 +409,7 @@ class LHK extends Public_Controller
                         'kandang' => 'KD - '.$kandang,
                         'umur' => selisihTanggal($tgl_docin, date('Y-m-d'))
                     );
-                // }
+                }
             }
         }
 
