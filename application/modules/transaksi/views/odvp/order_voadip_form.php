@@ -112,6 +112,10 @@
 											<option value="<?php echo $v_gudang['id']; ?>" data-alamat="<?php echo $v_gudang['alamat']; ?>"><?php echo strtoupper($v_gudang['nama']); ?></option>
 										<?php endforeach ?>
 									</select>
+									<div class="btn-ctrl">
+										<span onclick="odvp.removeRowChild(this)" class="btn_del_row_2x hide"></span>
+										<span onclick="odvp.addRowChildVoadip(this)" class="btn_add_row_2x"></span>
+									</div>
 								</td>
 								<td class="hide">
 									<select class="form-control peternak" data-jenis="peternak" data-required="1" onchange="odvp.set_alamat_order_pakan(this)">
@@ -120,10 +124,6 @@
 											<option value="<?php echo $v_peternak['noreg']; ?>" data-alamat="<?php echo $v_peternak['alamat']; ?>"><?php echo strtoupper($v_peternak['kode_unit']).' | '.strtoupper($v_peternak['nama']).' ('.$v_peternak['noreg'].')'; ?></option>
 										<?php endforeach ?>
 									</select>
-									<div class="btn-ctrl">
-										<span onclick="odvp.removeRowChild(this)" class="btn_del_row_2x hide"></span>
-										<span onclick="odvp.addRowChildVoadip(this)" class="btn_add_row_2x"></span>
-									</div>
 								</td>
 								<td class="alamat hide">
 									<div class="alamat">-</div>

@@ -148,6 +148,18 @@
 												<option value="<?php echo $v_gudang['id']; ?>" data-alamat="<?php echo $v_gudang['alamat']; ?>" <?php echo $selected; ?> ><?php echo strtoupper($v_gudang['nama']); ?></option>
 											<?php endforeach ?>
 										</select>
+										<?php $display = 'display:none'; ?>
+										<?php if ( $index == count($data['detail']) ): ?>
+											<?php $display = null; ?>
+										<?php endif ?>
+										<div class="btn-ctrl" style="<?php echo $display; ?>">
+											<?php $hide = null; ?>
+											<?php if ( $index == 1 ): ?>
+												<?php $hide = 'hide'; ?>
+											<?php endif ?>
+											<span onclick="odvp.removeRowChild(this)" class="btn_del_row_2x <?php echo $hide; ?>"></span>
+											<span onclick="odvp.addRowChildVoadip(this)" class="btn_add_row_2x"></span>
+										</div>
 									</td>
 									<td class="hide">
 										<select class="form-control peternak" data-jenis="peternak" <?php echo ($v_detail['kirim_ke'] == 'peternak') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
@@ -164,19 +176,6 @@
 												<option value="<?php echo $v_peternak['noreg']; ?>" data-alamat="<?php echo $v_peternak['alamat']; ?>" <?php echo $selected; ?> ><?php echo strtoupper($v_peternak['kode_unit']).' | '.strtoupper($v_peternak['nama']).' ('.$v_peternak['noreg'].')'; ?></option>
 											<?php endforeach ?>
 										</select>
-
-										<?php $display = 'display:none'; ?>
-										<?php if ( $index == count($data['detail']) ): ?>
-											<?php $display = null; ?>
-										<?php endif ?>
-										<div class="btn-ctrl" style="<?php echo $display; ?>">
-											<?php $hide = null; ?>
-											<?php if ( $index == 1 ): ?>
-												<?php $hide = 'hide'; ?>
-											<?php endif ?>
-											<span onclick="odvp.removeRowChild(this)" class="btn_del_row_2x <?php echo $hide; ?>"></span>
-											<span onclick="odvp.addRowChildVoadip(this)" class="btn_add_row_2x"></span>
-										</div>
 									</td>
 									<td class="alamat hide">
 										<div class="alamat"><?php echo $v_detail['alamat']; ?></div>
