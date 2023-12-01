@@ -402,7 +402,8 @@ var rv = {
             beforeSend : function(){ showLoading(); },
             success : function(data){
                 if ( data.status == 1 ) {
-                    rv.hitungStokAwal( data.content.id );
+                    rv.hitungStokByTransaksi(data.content.id, data.content.tanggal, data.content.delete, data.content.message);
+                    // rv.hitungStokAwal( data.content.id );
                 } else {
                     hideLoading();
                     bootbox.alert( data.message );

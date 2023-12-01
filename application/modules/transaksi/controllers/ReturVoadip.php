@@ -544,7 +544,12 @@ class ReturVoadip extends Public_Controller
             Modules::run( 'base/event/save', $d_rv, $deskripsi_log);
 
             $this->result['status'] = 1;
-            $this->result['content'] = array('id' => $id_rv);
+            $this->result['content'] = array(
+                'id' => $id_rv,
+                'tanggal' => $params['tgl_retur'],
+                'delete' => 0,
+                'message' => 'Data berhasil di simpan'
+            );
         } catch (Exception $e) {
             $this->result['message'] = "Gagal : " . $e->getMessage();
         }
