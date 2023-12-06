@@ -577,7 +577,7 @@ class Bakul extends Public_Controller
                 real_sj rs
                 on
                     drs.id_header = rs.id
-            left join
+            right join
                 (
                     select * from (
                         select dpp1.*, pp.perusahaan from det_pembayaran_pelanggan dpp1
@@ -595,18 +595,9 @@ class Bakul extends Public_Controller
                 ) dpp
                 on
                     drs.id = dpp.id_do
-            left join
-                (
-                    select max(tgl_mulai_bayar) as tgl_mulai_bayar, no_pelanggan from saldo_pelanggan where tgl_mulai_bayar is not null group by no_pelanggan
-                ) sp
-                on
-                    sp.no_pelanggan = drs.no_pelanggan 
             where
-                rs.tgl_panen >= sp.tgl_mulai_bayar and
                 rs.id_unit in ('".implode("', '", $id_unit)."') and
                 drs.no_pelanggan = '".$pelanggan."' and
-                drs.harga > 0 and
-                drs.tonase > 0 and
                 (dpp.status = 'BELUM' or dpp.id is null)
         ";
         $d_conf = $m_conf->hydrateRaw( $sql );
@@ -626,57 +617,7 @@ class Bakul extends Public_Controller
             $tgl_mulai_bayar = $tgl_mulai_bayar_sp;
         }
 
-        $m_conf = new \Model\Storage\Conf();
-        $sql = "
-            select 
-                min(data.tgl_panen) as tgl_panen
-            from
-            (
-                select
-                    max(rs.tgl_panen) as tgl_panen,
-                    rs.id_unit
-                from det_real_sj drs
-                left join
-                    real_sj rs
-                    on
-                        drs.id_header = rs.id
-                left join
-                    (
-                        select * from (
-                            select dpp1.*, pp.perusahaan from det_pembayaran_pelanggan dpp1
-                            right join
-                                (select max(id) as id, id_do from det_pembayaran_pelanggan group by id_do) dpp2
-                                on
-                                    dpp1.id = dpp2.id
-                            left join
-                                pembayaran_pelanggan pp
-                                on
-                                    pp.id = dpp1.id_header
-                        ) data
-                        where
-                            data.perusahaan = '".$perusahaan."'
-                    ) dpp
-                    on
-                        drs.id = dpp.id_do
-                where
-                    drs.no_pelanggan = '".$pelanggan."' and
-                    -- rs.id_unit in ('".implode("', '", $id_unit)."') and
-                    drs.harga > 0 and
-                    drs.tonase > 0 and
-                    dpp.status = 'LUNAS'
-                group by
-                    rs.id_unit
-            ) data
-        ";
-
-        $d_conf = $m_conf->hydrateRaw( $sql );
-
-        if ( $d_conf->count() > 0 ) {
-            $tgl_mulai_bayar = $d_conf->toArray()[0]['tgl_panen'];
-            if ( $tgl_mulai_bayar <= $tgl_mulai_bayar_sp ) {
-                $tgl_mulai_bayar = $tgl_mulai_bayar_sp;
-            }
-        }
+        // cetak_r( $tgl_mulai_bayar, 1 );
 
         // $m_rs = new \Model\Storage\RealSJ_model();
         // $data_rs = null;
@@ -844,23 +785,6 @@ class Bakul extends Public_Controller
                         ) rdim
                         on
                             rdim.noreg = rs.noreg
-                    where
-                        rs.id is not null
-                    group by
-                        rs.id,
-                        rs.id_unit,
-                        rs.unit,
-                        rs.tgl_panen,
-                        rs.noreg,
-                        rs.ekor,
-                        rs.kg,
-                        rs.bb,
-                        rs.tara,
-                        rs.netto_ekor,
-                        rs.netto_kg,
-                        rs.netto_bb,
-                        rs.g_status,
-                        rdim.nama
                 ) rs
                 on
                     drs.id_header = rs.id
@@ -877,7 +801,6 @@ class Bakul extends Public_Controller
             where
                 (dpp.status = 'BELUM' or dpp.id is null) and
                 drs.harga > 0 and
-                drs.tonase > 0 and
                 drs.no_pelanggan = '".$no_pelanggan."'
             group by
                 drs.id,
@@ -891,14 +814,16 @@ class Bakul extends Public_Controller
                 drs.harga
             order by
                 rs.tgl_panen asc,
-                drs.no_do asc,
-                drs.id asc
-        ";        
+                drs.no_do asc
+        ";
+        
         $d_conf = $m_conf->hydrateRaw( $sql );
 
         if ( $d_conf->count() > 0 ) {
             $data = $d_conf->toArray();
         }
+
+        // cetak_r( $data, 1 );
 
         $jumlah_bayar = 0;
 
@@ -1089,10 +1014,6 @@ class Bakul extends Public_Controller
 				$m_sp->perusahaan = $data['perusahaan'];
 				$m_sp->save();
 
-                $m_conf = new \Model\Storage\Conf();
-                $sql = "exec insert_jurnal NULL, NULL, NULL, 0, 'pembayaran_pelanggan', ".$id.", NULL, 1";
-                $d_conf = $m_conf->hydrateRaw( $sql );
-
 	        	$this->result['status'] = 1;
 	        	$this->result['message'] = 'Data berhasil di simpan.';
             }else {
@@ -1251,10 +1172,6 @@ class Bakul extends Public_Controller
 				$m_dpp->save();
 			}
 
-            $m_conf = new \Model\Storage\Conf();
-            $sql = "exec insert_jurnal NULL, NULL, NULL, 0, 'pembayaran_pelanggan', ".$id.", ".$id.", 2";
-            $d_conf = $m_conf->hydrateRaw( $sql );
-
 			$_d_pp = $m_pp->where('id', $id)->with(['detail'])->first();
 
 			$deskripsi_log = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
@@ -1350,10 +1267,6 @@ class Bakul extends Public_Controller
 			$m_sp->saldo = ($saldo > 0) ? $saldo : 0;
 			$m_sp->perusahaan = $d_pp['perusahaan'];
 			$m_sp->save();
-
-            $m_conf = new \Model\Storage\Conf();
-            $sql = "exec insert_jurnal NULL, NULL, NULL, 0, 'pembayaran_pelanggan', ".$id.", ".$id.", 3";
-            $d_conf = $m_conf->hydrateRaw( $sql );
 
         	$this->result['status'] = 1;
         	$this->result['message'] = 'Data berhasil di hapus.';

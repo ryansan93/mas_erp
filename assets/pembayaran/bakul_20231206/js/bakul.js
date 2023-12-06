@@ -66,8 +66,7 @@ var bakul = {
 		});
 
 		if ( empty(resubmit) ) {
-			// var minDate = moment(new Date()).subtract(3, 'days').format('YYYY-MM-DD');
-			var minDate = moment(new Date('2023-10-01'));
+			var minDate = moment(new Date()).subtract(3, 'days').format('YYYY-MM-DD');
 
 			$('#tglBayar').datetimepicker({
 	            locale: 'id',

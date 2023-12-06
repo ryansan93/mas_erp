@@ -292,8 +292,6 @@ var rv = {
         let jml_ov = numeral.unformat( $(tr).find('td.jml_ov').text() );
         let jml_retur = numeral.unformat( $(elm).val() );
 
-        console.log( jml_ov+' | '+jml_retur );
-
         if ( jml_ov < jml_retur ) {
             $(elm).val(0);
             $(tr).find('[data-toggle="tooltip"]').attr('title', 'Jumlah retur melebihi jumlah order').tooltip('show');

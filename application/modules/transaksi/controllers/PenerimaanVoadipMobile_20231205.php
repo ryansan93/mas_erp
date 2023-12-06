@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-class PenerimaanPakanMobile extends Public_Controller {
+class PenerimaanVoadipMobile extends Public_Controller {
 
     private $url;
 
@@ -25,11 +25,11 @@ class PenerimaanPakanMobile extends Public_Controller {
 
             $this->add_external_js(array(
                 "assets/select2/js/select2.min.js",
-                "assets/transaksi/penerimaan_pakan_mobile/js/penerimaan-pakan-mobile.js",
+                "assets/transaksi/penerimaan_voadip_mobile/js/penerimaan-voadip-mobile.js",
             ));
             $this->add_external_css(array(
                 "assets/select2/css/select2.min.css",
-                "assets/transaksi/penerimaan_pakan_mobile/css/penerimaan-pakan-mobile.css",
+                "assets/transaksi/penerimaan_voadip_mobile/css/penerimaan-voadip-mobile.css",
             ));
 
             $data = $this->includes;
@@ -49,8 +49,8 @@ class PenerimaanPakanMobile extends Public_Controller {
             $content['add_form'] = $this->add_form($mitra);
 
             // Load Indexx
-            $data['title_menu'] = 'Penerimaan Pakan';
-            $data['view'] = $this->load->view('transaksi/penerimaan_pakan_mobile/index', $content, TRUE);
+            $data['title_menu'] = 'Penerimaan Voadip';
+            $data['view'] = $this->load->view('transaksi/penerimaan_voadip_mobile/index', $content, TRUE);
             $this->load->view($this->template, $data);
         } else {
             showErrorAkses();
@@ -60,7 +60,7 @@ class PenerimaanPakanMobile extends Public_Controller {
     public function riwayat($mitra)
     {
         $content['data_mitra'] = $mitra;
-        $html = $this->load->view('transaksi/penerimaan_pakan_mobile/riwayat', $content, TRUE);
+        $html = $this->load->view('transaksi/penerimaan_voadip_mobile/riwayat', $content, TRUE);
 
         return $html;
     }
@@ -69,34 +69,34 @@ class PenerimaanPakanMobile extends Public_Controller {
     {
         $params = $this->input->post('params');
 
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('tujuan', $params['noreg'])->get();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('tujuan', $params['noreg'])->get();
 
         $data = array();
-        if ( $d_kirim_pakan->count() > 0 ) {
-            $d_kirim_pakan = $d_kirim_pakan->toArray();
-            foreach ($d_kirim_pakan as $k_kirim_pakan => $v_kirim_pakan) {
-                $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-                $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $v_kirim_pakan['id'])->first();
+        if ( $d_kirim_voadip->count() > 0 ) {
+            $d_kirim_voadip = $d_kirim_voadip->toArray();
+            foreach ($d_kirim_voadip as $k_kirim_voadip => $v_kirim_voadip) {
+                $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+                $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $v_kirim_voadip['id'])->first();
 
-                if ( !empty($d_terima_pakan) ) {
+                if ( !empty($d_terima_voadip) ) {
                     $asal = null;
-                    if ( $v_kirim_pakan['jenis_kirim'] == 'opkg' ) {
+                    if ( $v_kirim_voadip['jenis_kirim'] == 'opkg' ) {
                         $m_gdg = new \Model\Storage\Gudang_model();
-                        $d_gdg = $m_gdg->where('id', $v_kirim_pakan['asal'])->first();
+                        $d_gdg = $m_gdg->where('id', $v_kirim_voadip['asal'])->first();
 
                         $asal = $d_gdg->nama;
-                    } else if ( $v_kirim_pakan['jenis_kirim'] == 'opkp' ) {
+                    } else if ( $v_kirim_voadip['jenis_kirim'] == 'opkp' ) {
                         $m_rdim_submit = new \Model\Storage\RdimSubmit_model();
-                        $d_rdim_submit = $m_rdim_submit->where('noreg', $v_kirim_pakan['asal'])->with(['mitra'])->first();
+                        $d_rdim_submit = $m_rdim_submit->where('noreg', $v_kirim_voadip['asal'])->with(['mitra'])->first();
 
                         $asal = $d_rdim_submit->mitra->dMitra->nama;
                     }
 
-                    $key = str_replace('-', '', $d_terima_pakan->tgl_terima).' - '.$v_kirim_pakan['no_sj'];
+                    $key = str_replace('-', '', $d_terima_voadip->tgl_terima).' - '.$v_kirim_voadip['no_sj'];
                     $data[ $key ] = array(
-                        'no_sj' => $v_kirim_pakan['no_sj'],
-                        'tiba' => $d_terima_pakan->tgl_terima,
+                        'no_sj' => $v_kirim_voadip['no_sj'],
+                        'tiba' => $d_terima_voadip->tgl_terima,
                         'asal' => $asal
                     );
 
@@ -107,7 +107,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
         $content['data'] = $data;
 
-        $html = $this->load->view('transaksi/penerimaan_pakan_mobile/list_riwayat', $content, TRUE);
+        $html = $this->load->view('transaksi/penerimaan_voadip_mobile/list_riwayat', $content, TRUE);
 
         $this->result['html'] = $html;
 
@@ -137,51 +137,55 @@ class PenerimaanPakanMobile extends Public_Controller {
     public function add_form($mitra)
     {
         $content['data_mitra'] = $mitra;
-        $html = $this->load->view('transaksi/penerimaan_pakan_mobile/add_form', $content, true);
+        $html = $this->load->view('transaksi/penerimaan_voadip_mobile/add_form', $content, true);
 
         return $html;
     }
 
     public function detail_form($no_sj)
     {
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
 
-        $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-        $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $d_kirim_pakan['id'])->first();
+        $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+        $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $d_kirim_voadip['id'])->first();
 
         $m_rs = new \Model\Storage\RdimSubmit_model();
-        $d_rs = $m_rs->where('noreg', $d_kirim_pakan['tujuan'])->with(['mitra'])->first();
+        $d_rs = $m_rs->where('noreg', $d_kirim_voadip['tujuan'])->with(['mitra'])->first();
 
         $asal = null;
-        if ( $d_kirim_pakan['jenis_kirim'] == 'opkg' ) {
+        if ( $d_kirim_voadip['jenis_kirim'] == 'opkg' ) {
             $m_gdg = new \Model\Storage\Gudang_model();
-            $d_gdg = $m_gdg->where('id', $d_kirim_pakan['asal'])->first();
+            $d_gdg = $m_gdg->where('id', $d_kirim_voadip['asal'])->first();
 
             $asal = $d_gdg->nama;
-        } else if ( $d_kirim_pakan['jenis_kirim'] == 'opkp' ) {
+        } else if ( $d_kirim_voadip['jenis_kirim'] == 'opkp' ) {
             $m_rdim_submit = new \Model\Storage\RdimSubmit_model();
-            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_pakan['asal'])->with(['mitra'])->first();
+            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_voadip['asal'])->with(['mitra'])->first();
 
             $asal = $d_rdim_submit->mitra->dMitra->nama;
         }
 
         $data_brg = null;
-        foreach ($d_kirim_pakan['detail'] as $k_det => $v_det) {
-            if ( !isset( $data_brg[ $v_det['item'] ] ) ) {
-                $m_dterima_pakan = new \Model\Storage\TerimaPakanDetail_model();
-                $d_dterima_pakan = $m_dterima_pakan->where('id_header', $d_terima_pakan->id)->where('item', $v_det['item'])->first();
+        foreach ($d_kirim_voadip['detail'] as $k_det => $v_det) {
+            $key = $v_det['d_barang']['nama'].' | '.$v_det['item'];
 
-                $data_brg[ $v_det['item'] ] = array(
+            if ( !isset( $data_brg[ $key ] ) ) {
+                $m_dterima_voadip = new \Model\Storage\TerimaVoadipDetail_model();
+                $d_dterima_voadip = $m_dterima_voadip->where('id_header', $d_terima_voadip->id)->where('item', $v_det['item'])->first();
+
+                $data_brg[ $key ] = array(
                     'kode_brg' => $v_det['item'],
                     'nama_brg' => $v_det['d_barang']['nama'],
                     'jml_kirim' => $v_det['jumlah'],
-                    'jml_terima' => !empty($d_dterima_pakan) ? $d_dterima_pakan->jumlah : 0,
-                    'kondisi' => !empty($d_dterima_pakan) ? $d_dterima_pakan->kondisi : null
+                    'jml_terima' => !empty($d_dterima_voadip) ? $d_dterima_voadip->jumlah : 0,
+                    'kondisi' => !empty($d_dterima_voadip) ? $d_dterima_voadip->kondisi : null
                 );
             } else {
-                $data_brg[ $v_det['item'] ]['jml_kirim'] += $v_det['jumlah'];
+                $data_brg[ $key ]['jml_kirim'] += $v_det['jumlah'];
             }
+
+            ksort($data_brg);
         }
 
         $data = array(
@@ -189,60 +193,64 @@ class PenerimaanPakanMobile extends Public_Controller {
             'mitra' => $d_rs->mitra->dMitra->nama,
             'nomor' => $d_rs->mitra->dMitra->nomor,
             'noreg' => $d_rs->noreg,
-            'tiba' => $d_terima_pakan->tgl_terima,
+            'tiba' => $d_terima_voadip->tgl_terima,
             'asal' => $asal,
-            'nopol' => $d_kirim_pakan['no_polisi'],
-            'sopir' => $d_kirim_pakan['sopir'],
-            'ekspedisi' => $d_kirim_pakan['ekspedisi'],
+            'nopol' => $d_kirim_voadip['no_polisi'],
+            'sopir' => $d_kirim_voadip['sopir'],
+            'ekspedisi' => $d_kirim_voadip['ekspedisi'],
             'data_brg' => $data_brg
         );
 
         $content['data'] = $data;
-        $html = $this->load->view('transaksi/penerimaan_pakan_mobile/detail_form', $content, true);
+        $html = $this->load->view('transaksi/penerimaan_voadip_mobile/detail_form', $content, true);
 
         return $html;
     }
 
     public function edit_form($no_sj, $mitra)
     {
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
 
-        $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-        $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $d_kirim_pakan['id'])->first();
+        $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+        $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $d_kirim_voadip['id'])->first();
 
         $m_rs = new \Model\Storage\RdimSubmit_model();
-        $d_rs = $m_rs->where('noreg', $d_kirim_pakan['tujuan'])->with(['mitra'])->first();
+        $d_rs = $m_rs->where('noreg', $d_kirim_voadip['tujuan'])->with(['mitra'])->first();
 
         $asal = null;
-        if ( $d_kirim_pakan['jenis_kirim'] == 'opkg' ) {
+        if ( $d_kirim_voadip['jenis_kirim'] == 'opkg' ) {
             $m_gdg = new \Model\Storage\Gudang_model();
-            $d_gdg = $m_gdg->where('id', $d_kirim_pakan['asal'])->first();
+            $d_gdg = $m_gdg->where('id', $d_kirim_voadip['asal'])->first();
 
             $asal = $d_gdg->nama;
-        } else if ( $d_kirim_pakan['jenis_kirim'] == 'opkp' ) {
+        } else if ( $d_kirim_voadip['jenis_kirim'] == 'opkp' ) {
             $m_rdim_submit = new \Model\Storage\RdimSubmit_model();
-            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_pakan['asal'])->with(['mitra'])->first();
+            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_voadip['asal'])->with(['mitra'])->first();
 
             $asal = $d_rdim_submit->mitra->dMitra->nama;
         }
 
         $data_brg = null;
-        foreach ($d_kirim_pakan['detail'] as $k_det => $v_det) {
-            if ( !isset( $data_brg[ $v_det['item'] ] ) ) {
-                $m_dterima_pakan = new \Model\Storage\TerimaPakanDetail_model();
-                $d_dterima_pakan = $m_dterima_pakan->where('id_header', $d_terima_pakan->id)->where('item', $v_det['item'])->first();
+        foreach ($d_kirim_voadip['detail'] as $k_det => $v_det) {
+            $key = $v_det['d_barang']['nama'].' | '.$v_det['item'];
 
-                $data_brg[ $v_det['item'] ] = array(
+            if ( !isset( $data_brg[ $key ] ) ) {
+                $m_dterima_voadip = new \Model\Storage\TerimaVoadipDetail_model();
+                $d_dterima_voadip = $m_dterima_voadip->where('id_header', $d_terima_voadip->id)->where('item', $v_det['item'])->first();
+
+                $data_brg[ $key ] = array(
                     'kode_brg' => $v_det['item'],
                     'nama_brg' => $v_det['d_barang']['nama'],
                     'jml_kirim' => $v_det['jumlah'],
-                    'jml_terima' => !empty($d_dterima_pakan) ? $d_dterima_pakan->jumlah : 0,
-                    'kondisi' => !empty($d_dterima_pakan) ? $d_dterima_pakan->kondisi : null
+                    'jml_terima' => !empty($d_dterima_voadip) ? $d_dterima_voadip->jumlah : 0,
+                    'kondisi' => !empty($d_dterima_voadip) ? $d_dterima_voadip->kondisi : null
                 );
             } else {
-                $data_brg[ $v_det['item'] ]['jml_kirim'] += $v_det['jumlah'];
+                $data_brg[ $key ]['jml_kirim'] += $v_det['jumlah'];
             }
+
+            ksort($data_brg);
         }
 
         $data = array(
@@ -250,17 +258,17 @@ class PenerimaanPakanMobile extends Public_Controller {
             'mitra' => $d_rs->mitra->dMitra->nama,
             'nomor' => $d_rs->mitra->dMitra->nomor,
             'noreg' => $d_rs->noreg,
-            'tiba' => $d_terima_pakan->tgl_terima,
+            'tiba' => $d_terima_voadip->tgl_terima,
             'asal' => $asal,
-            'nopol' => $d_kirim_pakan['no_polisi'],
-            'sopir' => $d_kirim_pakan['sopir'],
-            'ekspedisi' => $d_kirim_pakan['ekspedisi'],
+            'nopol' => $d_kirim_voadip['no_polisi'],
+            'sopir' => $d_kirim_voadip['sopir'],
+            'ekspedisi' => $d_kirim_voadip['ekspedisi'],
             'data_brg' => $data_brg
         );
 
         $content['data'] = $data;
         $content['data_mitra'] = $mitra;
-        $html = $this->load->view('transaksi/penerimaan_pakan_mobile/edit_form', $content, true);
+        $html = $this->load->view('transaksi/penerimaan_voadip_mobile/edit_form', $content, true);
 
         return $html;
     }
@@ -347,9 +355,9 @@ class PenerimaanPakanMobile extends Public_Controller {
         }
 
         $end_date = date('Y-m-d').' 23:59:59.999';
-        $start_date = prev_date(date('Y-m-d'), 60).' 00:00:00.000';
+        $start_date = prev_date(date('Y-m-d'), 120).' 00:00:00.000';
 
-        $m_kp = new \Model\Storage\KirimPakan_model();
+        $m_kv = new \Model\Storage\KirimVoadip_model();
         $sql = "
             select 
                 data.nomor,
@@ -357,39 +365,39 @@ class PenerimaanPakanMobile extends Public_Controller {
                 data.unit
             from
                 (
-                select
-                    kp.no_order,
-                    kp.tujuan,
-                    m.nomor,
-                    m.nama,
-                    (SUBSTRING(kp.no_order, 4, 3)) as unit
-                from kirim_pakan kp
-                right join
-                    rdim_submit rs 
-                    on
-                        rs.noreg = kp.tujuan
-                right join
-                    (
-                        select mm1.* from mitra_mapping mm1
-                        right join
-                            (select max(id) as id, nim from mitra_mapping group by nim) mm2
-                            on
-                                mm1.id = mm2.id
-                    ) mm
-                    on
-                        rs.nim = mm.nim
-                right join
-                    mitra m 
-                    on
-                        m.id = mm.mitra
-                where
-                    rs.tgl_docin >= '".$start_date."'
-                group by
-                    kp.no_order,
-                    kp.tujuan,
-                    m.nomor,
-                    m.nama
-            ) data
+                    select
+                        kv.no_order,
+                        kv.tujuan,
+                        m.nomor,
+                        m.nama,
+                        (SUBSTRING(kv.no_order, 4, 3)) as unit
+                    from kirim_voadip kv
+                    right join
+                        rdim_submit rs 
+                        on
+                            rs.noreg = kv.tujuan
+                    right join
+                        (
+                            select mm1.* from mitra_mapping mm1
+                            right join
+                                (select max(id) as id, nim from mitra_mapping group by nim) mm2
+                                on
+                                    mm1.id = mm2.id
+                        ) mm
+                        on
+                            rs.nim = mm.nim
+                    right join
+                        mitra m 
+                        on
+                            m.id = mm.mitra
+                    where
+                        rs.tgl_docin >= '".$start_date."'
+                    group by
+                        kv.no_order,
+                        kv.tujuan,
+                        m.nomor,
+                        m.nama
+                ) data
             where
                 data.unit in ('".implode("', '", $kode_unit)."')
             group by
@@ -400,12 +408,12 @@ class PenerimaanPakanMobile extends Public_Controller {
                 data.unit asc,
                 data.nama asc
         ";
-        $d_kp = $m_kp->hydrateRaw( $sql );
+        $d_kv = $m_kv->hydrateRaw( $sql );
 
-        if ( $d_kp->count() > 0 ) {
-            $d_kp = $d_kp->toArray();
+        if ( $d_kv->count() > 0 ) {
+            $d_kv = $d_kv->toArray();
 
-            $data = $d_kp;
+            $data = $d_kv;
         }
 
         return $data;
@@ -415,8 +423,8 @@ class PenerimaanPakanMobile extends Public_Controller {
     {
         $nomor_mitra = $this->input->post('params');
 
-        $end_date = date('Y-m-d').' 00:00:00.000';
-        $start_date = prev_date(date('Y-m-d'), 60).' 23:59:59.999';
+        $end_date = date('Y-m-d').' 23:59:59.999';
+        $start_date = prev_date(date('Y-m-d'), 120).' 00:00:00.000';
 
         $m_mm = new \Model\Storage\MitraMapping_model();
         $d_mm = $m_mm->select('nim')->where('nomor', $nomor_mitra)->get()->toArray();
@@ -480,32 +488,32 @@ class PenerimaanPakanMobile extends Public_Controller {
         $noreg = $this->input->post('noreg');
         $no_sj = $this->input->post('no_sj');
 
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('tujuan', 'like', '%'.$noreg.'%')->get();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('tujuan', 'like', '%'.$noreg.'%')->get();
 
         $_data = null;
-        if ( $d_kirim_pakan->count() > 0 ) {
-            $d_kirim_pakan = $d_kirim_pakan->toArray();
-            foreach ($d_kirim_pakan as $k_kirim_pakan => $v_kirim_pakan) {
-                $d_terima_pakan = null;
-                if ( $no_sj != $v_kirim_pakan['no_sj'] ) {
-                    $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-                    $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $v_kirim_pakan['id'])->first();
+        if ( $d_kirim_voadip->count() > 0 ) {
+            $d_kirim_voadip = $d_kirim_voadip->toArray();
+            foreach ($d_kirim_voadip as $k_kirim_voadip => $v_kirim_voadip) {
+                $d_terima_voadip = null;
+                if ( $no_sj != $v_kirim_voadip['no_sj'] ) {
+                    $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+                    $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $v_kirim_voadip['id'])->first();
                 }
 
-                if ( !$d_terima_pakan ) {
-                    $_data[ $v_kirim_pakan['no_sj'] ] = array(
-                        'no_sj' => $v_kirim_pakan['no_sj'],
-                        'tgl_kirim' => $v_kirim_pakan['tgl_kirim'],
-                        'tgl_kirim_after_format' => strtoupper(tglIndonesia($v_kirim_pakan['tgl_kirim'], '-', ' '))
+                if ( !$d_terima_voadip ) {
+                    $_data[ $v_kirim_voadip['no_sj'] ] = array(
+                        'no_sj' => $v_kirim_voadip['no_sj'],
+                        'tgl_kirim' => $v_kirim_voadip['tgl_kirim'],
+                        'tgl_kirim_after_format' => strtoupper(tglIndonesia($v_kirim_voadip['tgl_kirim'], '-', ' '))
                     );
                 }
 
-                // $_data[ $v_kirim_pakan['no_sj'] ] = array(
-                //         'no_sj' => $v_kirim_pakan['no_sj'],
-                //         'tgl_kirim' => $v_kirim_pakan['tgl_kirim'],
-                //         'tgl_kirim_after_format' => strtoupper(tglIndonesia($v_kirim_pakan['tgl_kirim'], '-', ' '))
-                //     );
+                // $_data[ $v_kirim_voadip['no_sj'] ] = array(
+                //     'no_sj' => $v_kirim_voadip['no_sj'],
+                //     'tgl_kirim' => $v_kirim_voadip['tgl_kirim'],
+                //     'tgl_kirim_after_format' => strtoupper(tglIndonesia($v_kirim_voadip['tgl_kirim'], '-', ' '))
+                // );
             }
         }
 
@@ -527,24 +535,24 @@ class PenerimaanPakanMobile extends Public_Controller {
     {
         $no_sj = $this->input->post('no_sj');
 
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('no_sj', $no_sj)->with(['detail'])->first()->toArray();
 
         $asal = null;
-        if ( $d_kirim_pakan['jenis_kirim'] == 'opkg' ) {
+        if ( $d_kirim_voadip['jenis_kirim'] == 'opkg' ) {
             $m_gdg = new \Model\Storage\Gudang_model();
-            $d_gdg = $m_gdg->where('id', $d_kirim_pakan['asal'])->first();
+            $d_gdg = $m_gdg->where('id', $d_kirim_voadip['asal'])->first();
 
             $asal = $d_gdg->nama;
-        } else if ( $d_kirim_pakan['jenis_kirim'] == 'opkp' ) {
+        } else if ( $d_kirim_voadip['jenis_kirim'] == 'opkp' ) {
             $m_rdim_submit = new \Model\Storage\RdimSubmit_model();
-            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_pakan['asal'])->with(['mitra'])->first();
+            $d_rdim_submit = $m_rdim_submit->where('noreg', $d_kirim_voadip['asal'])->with(['mitra'])->first();
 
             $asal = $d_rdim_submit->mitra->dMitra->nama;
         }
 
         $_data_detail = null;
-        foreach ($d_kirim_pakan['detail'] as $k_det => $v_det) {
+        foreach ($d_kirim_voadip['detail'] as $k_det => $v_det) {
             if ( !isset( $_data_detail[ $v_det['item'] ] ) ) {
                 $_data_detail[ $v_det['item'] ] = array(
                     'kode_brg' => $v_det['item'],
@@ -565,14 +573,14 @@ class PenerimaanPakanMobile extends Public_Controller {
         }
 
         $content['data'] = $data_detail;
-        $html_detail = $this->load->view('transaksi/penerimaan_pakan_mobile/list_kirim_pakan', $content, true);
+        $html_detail = $this->load->view('transaksi/penerimaan_voadip_mobile/list_kirim_voadip', $content, true);
 
         $data = array(
             'asal' => $asal,
-            'nopol' => $d_kirim_pakan['no_polisi'],
-            'sopir' => $d_kirim_pakan['sopir'],
-            'ekspedisi' => $d_kirim_pakan['ekspedisi'],
-            'tgl_kirim' => $d_kirim_pakan['tgl_kirim'],
+            'nopol' => $d_kirim_voadip['no_polisi'],
+            'sopir' => $d_kirim_voadip['sopir'],
+            'ekspedisi' => $d_kirim_voadip['ekspedisi'],
+            'tgl_kirim' => $d_kirim_voadip['tgl_kirim'],
             'html_detail' => $html_detail
         );
 
@@ -586,32 +594,32 @@ class PenerimaanPakanMobile extends Public_Controller {
         $params = $this->input->post('params');
 
         try {
-            $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-            $d_kirim_pakan = $m_kirim_pakan->where('no_sj', $params['no_sj'])->first();
+            $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+            $d_kirim_voadip = $m_kirim_voadip->where('no_sj', $params['no_sj'])->first();
 
-            $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-            $now = $m_terima_pakan->getDate();
+            $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+            $now = $m_terima_voadip->getDate();
 
-            $m_terima_pakan->id_kirim_pakan = $d_kirim_pakan->id;
-            $m_terima_pakan->tgl_trans = $now['waktu'];
-            $m_terima_pakan->tgl_terima = $params['tiba'];
-            $m_terima_pakan->save();
+            $m_terima_voadip->id_kirim_voadip = $d_kirim_voadip->id;
+            $m_terima_voadip->tgl_trans = $now['waktu'];
+            $m_terima_voadip->tgl_terima = $params['tiba'];
+            $m_terima_voadip->save();
 
-            $id_terima = $m_terima_pakan->id;
+            $id_terima = $m_terima_voadip->id;
 
             foreach ($params['data_brg'] as $k_detail => $v_detail) {
-                $m_terima_pakan_detail = new \Model\Storage\TerimaPakanDetail_model();
-                $m_terima_pakan_detail->id_header = $id_terima;
-                $m_terima_pakan_detail->item = $v_detail['kode_brg'];
-                $m_terima_pakan_detail->jumlah = $v_detail['jumlah'];
-                $m_terima_pakan_detail->kondisi = !empty($v_detail['kondisi']) ? strtoupper($v_detail['kondisi']) : null;
-                $m_terima_pakan_detail->save();
+                $m_terima_voadip_detail = new \Model\Storage\TerimaVoadipDetail_model();
+                $m_terima_voadip_detail->id_header = $id_terima;
+                $m_terima_voadip_detail->item = $v_detail['kode_brg'];
+                $m_terima_voadip_detail->jumlah = $v_detail['jumlah'];
+                $m_terima_voadip_detail->kondisi = !empty($v_detail['kondisi']) ? strtoupper($v_detail['kondisi']) : null;
+                $m_terima_voadip_detail->save();
             }
 
-            $d_terima_pakan = $m_terima_pakan->where('id', $id_terima)->first();
+            $d_terima_voadip = $m_terima_voadip->where('id', $id_terima)->first();
 
-            $deskripsi_log_terima_pakan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
-            Modules::run( 'base/event/save', $d_terima_pakan, $deskripsi_log_terima_pakan);
+            $deskripsi_log_terima_voadip = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
+            Modules::run( 'base/event/save', $d_terima_voadip, $deskripsi_log_terima_voadip);
 
             $this->result['status'] = 1;
             // $this->result['content'] = array('id_terima' => $id_terima);
@@ -619,7 +627,7 @@ class PenerimaanPakanMobile extends Public_Controller {
                 'id' => $id_terima,
                 'tanggal' => $params['tiba'],
                 'delete' => 0,
-                'message' => 'Data Penerimaan Pakan berhasil di simpan.',
+                'message' => 'Data Penerimaan Voadip berhasil di simpan.',
                 'status_jurnal' => 1
             );
         } catch (\Illuminate\Database\QueryException $e) {
@@ -656,7 +664,7 @@ class PenerimaanPakanMobile extends Public_Controller {
                 $stok_id = $m_stok->id;
 
                 $conf = new \Model\Storage\Conf();
-                $sql = "EXEC get_data_stok_pakan_by_tanggal @date = '$date'";
+                $sql = "EXEC get_data_stok_voadip_by_tanggal @date = '$date'";
 
                 $d_conf = $conf->hydrateRaw($sql);
 
@@ -689,7 +697,7 @@ class PenerimaanPakanMobile extends Public_Controller {
             }
 
             $this->result['status'] = 1;
-            $this->result['message'] = 'Data Penerimaan Pakan berhasil di simpan.';
+            $this->result['message'] = 'Data Penerimaan Voadip berhasil di simpan.';
         } catch (\Illuminate\Database\QueryException $e) {
             $this->result['message'] = "Gagal : " . $e->getMessage();
         }
@@ -699,42 +707,42 @@ class PenerimaanPakanMobile extends Public_Controller {
 
     public function hitungStok($id_terima, $stok_id)
     {
-        $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-        $d_terima_pakan = $m_terima_pakan->where('id', $id_terima)->with(['detail'])->first()->toArray();
+        $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+        $d_terima_voadip = $m_terima_voadip->where('id', $id_terima)->with(['detail'])->first()->toArray();
 
-        $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-        $d_kirim_pakan = $m_kirim_pakan->where('id', $d_terima_pakan['id_kirim_pakan'])->first()->toArray();
+        $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+        $d_kirim_voadip = $m_kirim_voadip->where('id', $d_terima_voadip['id_kirim_voadip'])->first()->toArray();
 
         $total = 0;
 
-        foreach ($d_terima_pakan['detail'] as $k_detail => $v_detail) {
-            if ( stristr($d_kirim_pakan['jenis_tujuan'], 'gudang') !== FALSE ) {
-                if ( stristr($d_kirim_pakan['jenis_kirim'], 'opkg') === false ) {
+        foreach ($d_terima_voadip['detail'] as $k_detail => $v_detail) {
+            if ( stristr($d_kirim_voadip['jenis_tujuan'], 'gudang') !== FALSE ) {
+                if ( stristr($d_kirim_voadip['jenis_kirim'], 'opkg') === false ) {
                     // MASUK STOK GUDANG
-                    $m_order_pakan = new \Model\Storage\OrderPakan_model();
-                    $d_order_pakan = $m_order_pakan->where('no_order', $d_kirim_pakan['no_order'])->first();
+                    $m_order_voadip = new \Model\Storage\OrderVoadip_model();
+                    $d_order_voadip = $m_order_voadip->where('no_order', $d_kirim_voadip['no_order'])->orderBy('version', 'desc')->first();
 
                     $harga_jual = 0;
                     $harga_beli = 0;
-                    if ( !empty($d_order_pakan) ) {
-                        $m_dorder_pakan = new \Model\Storage\OrderPakanDetail_model();
-                        $d_dorder_pakan = $m_dorder_pakan->where('id_header', $d_order_pakan->id)->where('barang', trim($v_detail['item']))->first();
+                    if ( !empty($d_order_voadip) ) {
+                        $m_dorder_voadip = new \Model\Storage\OrderVoadipDetail_model();
+                        $d_dorder_voadip = $m_dorder_voadip->where('id_order', $d_order_voadip->id)->where('kode_barang', trim($v_detail['item']))->first();
 
-                        $harga_jual = $d_dorder_pakan->harga_jual;
-                        $harga_beli = $d_dorder_pakan->harga;
+                        $harga_jual = $d_dorder_voadip->harga_jual;
+                        $harga_beli = $d_dorder_voadip->harga;
                     }
 
                     // MASUk STOK GUDANG
                     $m_dstok = new \Model\Storage\DetStok_model();
                     $m_dstok->id_header = $stok_id;
-                    $m_dstok->tgl_trans = $d_terima_pakan['tgl_terima'];
-                    $m_dstok->kode_gudang = $d_kirim_pakan['tujuan'];
+                    $m_dstok->tgl_trans = $d_terima_voadip['tgl_terima'];
+                    $m_dstok->kode_gudang = $d_kirim_voadip['tujuan'];
                     $m_dstok->kode_barang = $v_detail['item'];
                     $m_dstok->jumlah = $v_detail['jumlah'];
                     $m_dstok->hrg_jual = $harga_jual;
                     $m_dstok->hrg_beli = $harga_beli;
-                    $m_dstok->kode_trans = $d_kirim_pakan['no_order'];
-                    $m_dstok->jenis_barang = 'pakan';
+                    $m_dstok->kode_trans = $d_kirim_voadip['no_order'];
+                    $m_dstok->jenis_barang = 'voadip';
                     $m_dstok->jenis_trans = 'ORDER';
                     $m_dstok->jml_stok = $v_detail['jumlah'];
                     $m_dstok->save();
@@ -751,7 +759,7 @@ class PenerimaanPakanMobile extends Public_Controller {
                             select top 1 * from det_stok ds 
                             where
                                 ds.id_header = ".$stok_id." and 
-                                ds.kode_gudang = ".$d_kirim_pakan['asal']." and 
+                                ds.kode_gudang = ".$d_kirim_voadip['asal']." and 
                                 ds.kode_barang = '".$v_detail['item']."' and 
                                 ds.jml_stok > 0
                             order by
@@ -777,7 +785,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
                                 $m_dstokt = new \Model\Storage\DetStokTrans_model();
                                 $m_dstokt->id_header = $d_dstok['id'];
-                                $m_dstokt->kode_trans = $d_kirim_pakan['no_order'];
+                                $m_dstokt->kode_trans = $d_kirim_voadip['no_order'];
                                 $m_dstokt->jumlah = $jml_keluar;
                                 $m_dstokt->kode_barang = $v_detail['item'];
                                 $m_dstokt->save();
@@ -785,14 +793,14 @@ class PenerimaanPakanMobile extends Public_Controller {
                                 // MASUK STOK GUDANG
                                 $m_dstok = new \Model\Storage\DetStok_model();
                                 $m_dstok->id_header = $stok_id;
-                                $m_dstok->tgl_trans = $d_terima_pakan['tgl_terima'];
-                                $m_dstok->kode_gudang = $d_kirim_pakan['tujuan'];
+                                $m_dstok->tgl_trans = $d_terima_voadip['tgl_terima'];
+                                $m_dstok->kode_gudang = $d_kirim_voadip['tujuan'];
                                 $m_dstok->kode_barang = $v_detail['item'];
                                 $m_dstok->jumlah = $jml_keluar;
                                 $m_dstok->hrg_jual = $harga_jual;
                                 $m_dstok->hrg_beli = $harga_beli;
-                                $m_dstok->kode_trans = $d_kirim_pakan['no_order'];
-                                $m_dstok->jenis_barang = 'pakan';
+                                $m_dstok->kode_trans = $d_kirim_voadip['no_order'];
+                                $m_dstok->jenis_barang = 'voadip';
                                 $m_dstok->jenis_trans = 'ORDER';
                                 $m_dstok->jml_stok = $jml_keluar;
                                 $m_dstok->save();
@@ -807,7 +815,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
                                 $m_dstokt = new \Model\Storage\DetStokTrans_model();
                                 $m_dstokt->id_header = $d_dstok['id'];
-                                $m_dstokt->kode_trans = $d_kirim_pakan['no_order'];
+                                $m_dstokt->kode_trans = $d_kirim_voadip['no_order'];
                                 $m_dstokt->jumlah = $d_dstok['jml_stok'];
                                 $m_dstokt->kode_barang = $v_detail['item'];
                                 $m_dstokt->save();
@@ -815,14 +823,14 @@ class PenerimaanPakanMobile extends Public_Controller {
                                 // MASUK STOK GUDANG
                                 $m_dstok = new \Model\Storage\DetStok_model();
                                 $m_dstok->id_header = $stok_id;
-                                $m_dstok->tgl_trans = $d_terima_pakan['tgl_terima'];
-                                $m_dstok->kode_gudang = $d_kirim_pakan['tujuan'];
+                                $m_dstok->tgl_trans = $d_terima_voadip['tgl_terima'];
+                                $m_dstok->kode_gudang = $d_kirim_voadip['tujuan'];
                                 $m_dstok->kode_barang = $v_detail['item'];
                                 $m_dstok->jumlah = $d_dstok['jml_stok'];
                                 $m_dstok->hrg_jual = $harga_jual;
                                 $m_dstok->hrg_beli = $harga_beli;
-                                $m_dstok->kode_trans = $d_kirim_pakan['no_order'];
-                                $m_dstok->jenis_barang = 'pakan';
+                                $m_dstok->kode_trans = $d_kirim_voadip['no_order'];
+                                $m_dstok->jenis_barang = 'voadip';
                                 $m_dstok->jenis_trans = 'ORDER';
                                 $m_dstok->jml_stok = $d_dstok['jml_stok'];
                                 $m_dstok->save();
@@ -842,7 +850,7 @@ class PenerimaanPakanMobile extends Public_Controller {
                     }
                 }
             } else {
-                if ( stristr($d_kirim_pakan['jenis_kirim'], 'opkg') !== FALSE && stristr($d_kirim_pakan['jenis_tujuan'], 'gudang') === FALSE ) {
+                if ( stristr($d_kirim_voadip['jenis_kirim'], 'opkg') !== FALSE && stristr($d_kirim_voadip['jenis_tujuan'], 'gudang') === FALSE ) {
                     // KELUAR STOK GUDANG
                     $nilai_beli = 0;
                     $nilai_jual = 0;
@@ -853,7 +861,7 @@ class PenerimaanPakanMobile extends Public_Controller {
                             select top 1 * from det_stok ds 
                             where
                                 ds.id_header = ".$stok_id." and 
-                                ds.kode_gudang = ".$d_kirim_pakan['asal']." and 
+                                ds.kode_gudang = ".$d_kirim_voadip['asal']." and 
                                 ds.kode_barang = '".$v_detail['item']."' and 
                                 ds.jml_stok > 0
                             order by
@@ -879,7 +887,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
                                 $m_dstokt = new \Model\Storage\DetStokTrans_model();
                                 $m_dstokt->id_header = $d_dstok['id'];
-                                $m_dstokt->kode_trans = $d_kirim_pakan['no_order'];
+                                $m_dstokt->kode_trans = $d_kirim_voadip['no_order'];
                                 $m_dstokt->jumlah = $jml_keluar;
                                 $m_dstokt->kode_barang = $v_detail['item'];
                                 $m_dstokt->save();
@@ -894,7 +902,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
                                 $m_dstokt = new \Model\Storage\DetStokTrans_model();
                                 $m_dstokt->id_header = $d_dstok['id'];
-                                $m_dstokt->kode_trans = $d_kirim_pakan['no_order'];
+                                $m_dstokt->kode_trans = $d_kirim_voadip['no_order'];
                                 $m_dstokt->jumlah = $d_dstok['jml_stok'];
                                 $m_dstokt->kode_barang = $v_detail['item'];
                                 $m_dstokt->save();
@@ -917,7 +925,7 @@ class PenerimaanPakanMobile extends Public_Controller {
         }
 
         $m_conf = new \Model\Storage\Conf();
-        $sql = "exec insert_jurnal 'PAKAN', '".$d_kirim_pakan['no_order']."', NULL, ".$total.", 'terima_pakan', ".$id_terima.", NULL, 1";
+        $sql = "exec insert_jurnal 'OVK', '".$d_kirim_voadip['no_order']."', NULL, ".$total.", 'terima_voadip', ".$id_terima.", NULL, 1";
 
         $d_conf = $m_conf->hydrateRaw( $sql );
     }
@@ -934,7 +942,7 @@ class PenerimaanPakanMobile extends Public_Controller {
 
         try {
             $conf = new \Model\Storage\Conf();
-            $sql = "EXEC hitung_stok_pakan_by_transaksi 'terima_pakan', '".$id."', '".$tanggal."', ".$delete.", ".$status_jurnal."";
+            $sql = "EXEC hitung_stok_voadip_by_transaksi 'terima_voadip', '".$id."', '".$tanggal."', ".$delete.", ".$status_jurnal."";
 
             $d_conf = $conf->hydrateRaw($sql);
 
@@ -952,42 +960,42 @@ class PenerimaanPakanMobile extends Public_Controller {
     //     $params = $this->input->post('params');
 
     //     try {
-    //         $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-    //         $d_kirim_pakan_old = $m_kirim_pakan->where('no_sj', $params['no_sj_old'])->first();
-    //         $d_kirim_pakan_new = $m_kirim_pakan->where('no_sj', $params['no_sj'])->first();
+    //         $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+    //         $d_kirim_voadip_old = $m_kirim_voadip->where('no_sj', $params['no_sj_old'])->first();
+    //         $d_kirim_voadip_new = $m_kirim_voadip->where('no_sj', $params['no_sj'])->first();
 
-    //         $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-    //         $now = $m_terima_pakan->getDate();
+    //         $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+    //         $now = $m_terima_voadip->getDate();
 
-    //         $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $d_kirim_pakan_old->id)->first();
-    //         $m_terima_pakan->where('id_kirim_pakan', $d_kirim_pakan_old->id)->update(
+    //         $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $d_kirim_voadip_old->id)->first();
+    //         $m_terima_voadip->where('id_kirim_voadip', $d_kirim_voadip_old->id)->update(
     //             array(
-    //                 'id_kirim_pakan' => $d_kirim_pakan_new->id,
+    //                 'id_kirim_voadip' => $d_kirim_voadip_new->id,
     //                 'tgl_trans' => $now['waktu'],
     //                 'tgl_terima' => $params['tiba']
     //             )
     //         );
 
-    //         $id_header = $d_terima_pakan->id;
+    //         $id_header = $d_terima_voadip->id;
 
-    //         $m_terima_pakan_detail = new \Model\Storage\TerimaPakanDetail_model();
-    //         $m_terima_pakan_detail->where('id_header', $id_header)->delete();
+    //         $m_terima_voadip_detail = new \Model\Storage\TerimaVoadipDetail_model();
+    //         $m_terima_voadip_detail->where('id_header', $id_header)->delete();
     //         foreach ($params['data_brg'] as $k_detail => $v_detail) {
-    //             $m_terima_pakan_detail = new \Model\Storage\TerimaPakanDetail_model();
-    //             $m_terima_pakan_detail->id_header = $id_header;
-    //             $m_terima_pakan_detail->item = $v_detail['kode_brg'];
-    //             $m_terima_pakan_detail->jumlah = $v_detail['jumlah'];
-    //             $m_terima_pakan_detail->kondisi = !empty($v_detail['kondisi']) ? strtoupper($v_detail['kondisi']) : null;
-    //             $m_terima_pakan_detail->save();
+    //             $m_terima_voadip_detail = new \Model\Storage\TerimaVoadipDetail_model();
+    //             $m_terima_voadip_detail->id_header = $id_header;
+    //             $m_terima_voadip_detail->item = $v_detail['kode_brg'];
+    //             $m_terima_voadip_detail->jumlah = $v_detail['jumlah'];
+    //             $m_terima_voadip_detail->kondisi = !empty($v_detail['kondisi']) ? strtoupper($v_detail['kondisi']) : null;
+    //             $m_terima_voadip_detail->save();
     //         }
 
-    //         $d_terima_pakan = $m_terima_pakan->where('id', $id_header)->first();
+    //         $d_terima_voadip = $m_terima_voadip->where('id', $id_header)->first();
 
-    //         $deskripsi_log_terima_pakan = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
-    //         Modules::run( 'base/event/update', $d_terima_pakan, $deskripsi_log_terima_pakan);
+    //         $deskripsi_log_terima_voadip = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
+    //         Modules::run( 'base/event/update', $d_terima_voadip, $deskripsi_log_terima_voadip);
 
     //         $this->result['status'] = 1;
-    //         $this->result['message'] = 'Data Penerimaan Pakan berhasil di-update.';
+    //         $this->result['message'] = 'Data Penerimaan Voadip berhasil di-update.';
     //     } catch (\Illuminate\Database\QueryException $e) {
     //         $this->result['message'] = "Gagal : " . $e->getMessage();
     //     }
@@ -1000,18 +1008,18 @@ class PenerimaanPakanMobile extends Public_Controller {
     //     $params = $this->input->post('params');
 
     //     try {
-    //         $m_kirim_pakan = new \Model\Storage\KirimPakan_model();
-    //         $d_kirim_pakan = $m_kirim_pakan->where('no_sj', $params['no_sj'])->first();
+    //         $m_kirim_voadip = new \Model\Storage\KirimVoadip_model();
+    //         $d_kirim_voadip = $m_kirim_voadip->where('no_sj', $params['no_sj'])->first();
 
-    //         $m_terima_pakan = new \Model\Storage\TerimaPakan_model();
-    //         $d_terima_pakan = $m_terima_pakan->where('id_kirim_pakan', $d_kirim_pakan->id)->first();
+    //         $m_terima_voadip = new \Model\Storage\TerimaVoadip_model();
+    //         $d_terima_voadip = $m_terima_voadip->where('id_kirim_voadip', $d_kirim_voadip->id)->first();
 
-    //         $m_terima_pakan->where('id', $d_terima_pakan->id)->delete();
-    //         $m_dterima_pakan = new \Model\Storage\TerimaPakanDetail_model();
-    //         $m_dterima_pakan->where('id_header', $d_terima_pakan->id)->delete();
+    //         $m_terima_voadip->where('id', $d_terima_voadip->id)->delete();
+    //         $m_dterima_voadip = new \Model\Storage\TerimaVoadipDetail_model();
+    //         $m_dterima_voadip->where('id_header', $d_terima_voadip->id)->delete();
 
-    //         $deskripsi_log = 'hapus data penerimaan pakan noreg '+$d_kirim_pakan->tujuan+' oleh ' . $this->userdata['detail_user']['nama_detuser'];
-    //         Modules::run( 'base/event/delete', $d_terima_pakan, $deskripsi_log);
+    //         $deskripsi_log = 'hapus data penerimaan voadip noreg '+$d_kirim_voadip->tujuan+' oleh ' . $this->userdata['detail_user']['nama_detuser'];
+    //         Modules::run( 'base/event/delete', $d_terima_voadip, $deskripsi_log);
 
     //         $this->result['status'] = 1;
     //         $this->result['message'] = 'Data berhasil di hapus';           

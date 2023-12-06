@@ -16,7 +16,7 @@
 				</select>
 			</td>
 			<td>
-				<input type="text" class="form-control text-right jumlah" placeholder="Jumlah" data-tipe="integer" data-required="1" value="<?php echo angkaRibuan($v_data['jumlah']); ?>">
+				<input type="text" class="form-control text-right jumlah" placeholder="Jumlah" data-tipe="integer" data-required="1" value="<?php echo angkaRibuan($v_data['jumlah']); ?>" onblur="pp.cek_stok_gudang(this)" disabled="disabled">
 			</td>
 			<td>
 				<input type="text" class="form-control kondisi" placeholder="Kondisi" data-required="1">

@@ -339,10 +339,10 @@ var pv = {
 						}
 						option += '<option value="'+data.content[i].noreg+'" '+selected+'>'+data.content[i].kode_unit.toUpperCase()+' | '+data.content[i].tgl_terima+' | '+data.content[i].nama.toUpperCase()+' ('+data.content[i].noreg.toUpperCase()+')</option>';
 
+						idx++;
 						if ( idx == data.content.length ) {
 							hideLoading();
 						}
-						idx++;
 					}
 				} else {
 					hideLoading();
@@ -374,11 +374,16 @@ var pv = {
 				if ( data.status == 1 ) {
 					App.hideLoaderInContent(tbody, data.content);
 
-					if ( jenis_pengiriman == 'opkg' ) {
+					if ( jenis_pengiriman == 'opks' ) {
 						$(tbody).find('select.barang').attr('disabled', true);
-						$(tbody).find('input.jumlah').attr('disabled', true);
-						$(tbody).find('input.kondisi').attr('disabled', true);
-					}
+						$(tbody).find('input.jumlah').attr('disabled', false);
+						$(tbody).find('input.kondisi').attr('disabled', false);
+					} 
+					// else {
+					// 	$(tbody).find('select.barang').attr('disabled', true);
+					// 	$(tbody).find('input.jumlah').attr('disabled', true);
+					// 	$(tbody).find('input.kondisi').attr('disabled', true);
+					// }
 
 					pv.setting_up();
 				};

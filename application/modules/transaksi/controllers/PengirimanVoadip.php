@@ -467,40 +467,35 @@ class PengirimanVoadip extends Public_Controller {
         if ( $d_rs->count() > 0 ) {
             $d_rs = $d_rs->toArray();
             foreach ($d_rs as $k_rs => $v_rs) {
-                $m_ts = new \Model\Storage\TutupSiklus_model();
-                $d_ts = $m_ts->where('noreg', $v_rs['noreg'])->first();
+                $m_od = new \Model\Storage\OrderDoc_model();
+                $d_od = $m_od->where('noreg', $v_rs['noreg'])->orderBy('id', 'desc')->first();
 
-                if ( !$d_ts ) {
-                    $m_od = new \Model\Storage\OrderDoc_model();
-                    $d_od = $m_od->where('noreg', $v_rs['noreg'])->orderBy('id', 'desc')->first();
+                $tgl_terima = $v_rs['tgl_docin'];
+                if ( $d_od ) {
+                    $m_td = new \Model\Storage\TerimaDoc_model();
+                    $d_td = $m_td->where('no_order', $d_od->no_order)->orderBy('id', 'desc')->first();
 
-                    $tgl_terima = $v_rs['tgl_docin'];
-                    if ( $d_od ) {
-                        $m_td = new \Model\Storage\TerimaDoc_model();
-                        $d_td = $m_td->where('no_order', $d_od->no_order)->orderBy('id', 'desc')->first();
-
-                        if ( $d_td ) {
-                            $tgl_terima = $d_td->datang;
-                        }
+                    if ( $d_td ) {
+                        $tgl_terima = $d_td->datang;
                     }
-
-                    $rt = !empty($v_rs['mitra']['d_mitra']['alamat_rt']) ? ' ,RT.'.$v_rs['mitra']['d_mitra']['alamat_rt'] : null;
-                    $rw = !empty($v_rs['mitra']['d_mitra']['alamat_rw']) ? '/RW.'.$v_rs['mitra']['d_mitra']['alamat_rw'] : null;
-                    $kelurahan = !empty($v_rs['mitra']['d_mitra']['alamat_kelurahan']) ? ' ,'.$v_rs['mitra']['d_mitra']['alamat_kelurahan'] : null;
-                    $kecamatan = !empty($v_rs['mitra']['d_mitra']['d_kecamatan']) ? ' ,'.$v_rs['mitra']['d_mitra']['d_kecamatan']['nama'] : null;
-
-                    $alamat = $v_rs['mitra']['d_mitra']['alamat_jalan'] . $rt . $rw . $kelurahan . $kecamatan;
-
-                    $key = $v_rs['kandang']['d_unit']['kode'].'-'.$tgl_terima.' - '.$v_rs['mitra']['d_mitra']['nama'].' - '.$v_rs['noreg'];
-                    $_data[ $key ] = array(
-                        'tgl_terima' => strtoupper(tglIndonesia($tgl_terima, '-', ' ')),
-                        'noreg' => $v_rs['noreg'],
-                        'kode_unit' => $v_rs['kandang']['d_unit']['kode'],
-                        'nomor' => $v_rs['mitra']['d_mitra']['nomor'],
-                        'nama' => $v_rs['mitra']['d_mitra']['nama'],
-                        'alamat' => strtoupper($alamat)
-                    );
                 }
+
+                $rt = !empty($v_rs['mitra']['d_mitra']['alamat_rt']) ? ' ,RT.'.$v_rs['mitra']['d_mitra']['alamat_rt'] : null;
+                $rw = !empty($v_rs['mitra']['d_mitra']['alamat_rw']) ? '/RW.'.$v_rs['mitra']['d_mitra']['alamat_rw'] : null;
+                $kelurahan = !empty($v_rs['mitra']['d_mitra']['alamat_kelurahan']) ? ' ,'.$v_rs['mitra']['d_mitra']['alamat_kelurahan'] : null;
+                $kecamatan = !empty($v_rs['mitra']['d_mitra']['d_kecamatan']) ? ' ,'.$v_rs['mitra']['d_mitra']['d_kecamatan']['nama'] : null;
+
+                $alamat = $v_rs['mitra']['d_mitra']['alamat_jalan'] . $rt . $rw . $kelurahan . $kecamatan;
+
+                $key = $v_rs['kandang']['d_unit']['kode'].'-'.$tgl_terima.' - '.$v_rs['mitra']['d_mitra']['nama'].' - '.$v_rs['noreg'];
+                $_data[ $key ] = array(
+                    'tgl_terima' => strtoupper(tglIndonesia($tgl_terima, '-', ' ')),
+                    'noreg' => $v_rs['noreg'],
+                    'kode_unit' => $v_rs['kandang']['d_unit']['kode'],
+                    'nomor' => $v_rs['mitra']['d_mitra']['nomor'],
+                    'nama' => $v_rs['mitra']['d_mitra']['nama'],
+                    'alamat' => strtoupper($alamat)
+                );
             }
         }
 
