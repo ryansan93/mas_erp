@@ -134,7 +134,7 @@
 										<input type="text" class="form-control text-center date" placeholder="Kirim" id="tgl_kirim" name="tgl_kirim" data-tanggal="<?php echo $v_detail['tgl_kirim']; ?>" value="<?php echo tglIndonesia($v_detail['tgl_kirim'], '-', ' ') ?>" />
 									</td>
 									<td>
-										<select class="form-control gudang" data-jenis="gudang" <?php echo ($v_detail['kirim_ke'] == 'gudang') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
+										<select class="form-control gudang" data-jenis="gudang" data-required="1" <?php // echo ($v_detail['kirim_ke'] == 'gudang') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
 											<option value="">-- Pilih Gudang --</option>
 											<?php foreach ($gudang as $k_gudang => $v_gudang): ?>
 												<?php
@@ -162,7 +162,7 @@
 										</div>
 									</td>
 									<td class="hide">
-										<select class="form-control peternak" data-jenis="peternak" <?php echo ($v_detail['kirim_ke'] == 'peternak') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
+										<select class="form-control peternak" data-jenis="peternak" <?php // echo ($v_detail['kirim_ke'] == 'peternak') ? 'data-required=1' : 'disabled'; ?> onchange="odvp.set_alamat_order_pakan(this)">
 											<option value="">-- Pilih Peternak --</option>
 											<?php foreach ($peternak as $k_peternak => $v_peternak): ?>
 												<?php
