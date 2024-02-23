@@ -669,13 +669,13 @@ class KasKecil extends Public_Controller {
         display_json( $this->result );
     }
 
-    public function model($status)
-    {
-        $m_sk = new \Model\Storage\SaldoKas_model();
-        $dashboard = $m_sk->getDashboard($status);
+    // public function model($status)
+    // {
+    //     $m_sk = new \Model\Storage\SaldoKas_model();
+    //     $dashboard = $m_sk->getDashboard($status);
 
-        cetak_r( $dashboard );
+    //     cetak_r( $dashboard );
 
-        return $dashboard;
-    }
+    //     return $dashboard;
+    // }
 }
