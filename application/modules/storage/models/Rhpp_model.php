@@ -64,4 +64,9 @@ class Rhpp_model extends Conf{
 	{
 		return $this->hasMany('\Model\Storage\RhppBonus_model', 'id_header', 'id');
 	}
+
+	public function piutang()
+	{
+		return $this->hasMany('\Model\Storage\RhppPiutang_model', 'id_header', 'id')->with(['piutang']);
+	}
 }
