@@ -725,8 +725,6 @@ class Ekspedisi extends Public_Controller {
 		if ( $d_ekspedisi->count() > 0 ) {
 			$d_ekspedisi = $d_ekspedisi->toArray();
 
-			cetak_r($d_ekspedisi, 1);
-
 			foreach ($d_ekspedisi as $k_eks => $v_eks) {
 				$keterangan = !empty($v_eks['deskripsi'] && $v_eks['waktu']) ? $v_eks['deskripsi'] . ' pada ' . dateTimeFormat($v_eks['waktu']) : '';
 
