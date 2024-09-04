@@ -685,15 +685,17 @@ class Ekspedisi extends Public_Controller {
 				kk.nama as kab_kota,
 				lt.deskripsi,
 				lt.waktu
-			from ekspedisi eks 
-			right join 
-				(select max(id) as id, nomor from ekspedisi group by nomor) as e 
-				on
-					eks.id = e.id
-			right join 
+			from (
+					select eks1.* from ekspedisi eks1
+					right join 
+						(select max(id) as id, nomor from ekspedisi group by nomor) as eks2
+						on
+							eks1.id = eks2.id
+				) eks
+			left join 
 				lokasi l 
 				on l.id = eks.alamat_kecamatan 
-			right join 
+			left join 
 				lokasi kk 
 				on kk.id = l.induk 
 			left join 
@@ -722,6 +724,8 @@ class Ekspedisi extends Public_Controller {
 		$d_ekspedisi = $m_ekspedisi->hydrateRaw( $sql );
 		if ( $d_ekspedisi->count() > 0 ) {
 			$d_ekspedisi = $d_ekspedisi->toArray();
+
+			cetak_r($d_ekspedisi, 1);
 
 			foreach ($d_ekspedisi as $k_eks => $v_eks) {
 				$keterangan = !empty($v_eks['deskripsi'] && $v_eks['waktu']) ? $v_eks['deskripsi'] . ' pada ' . dateTimeFormat($v_eks['waktu']) : '';
