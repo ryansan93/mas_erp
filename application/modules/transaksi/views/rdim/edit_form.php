@@ -91,7 +91,7 @@
 			<?php $_key = null; ?>
 			<?php foreach ($rdim_data_perwakilan_mitra as $key => $perwakilan): ?>
 				<?php $_key = $key; ?>
-				<?php if ($perwakilan['child']): ?>
+				<?php if (isset($perwakilan['child']) && !empty($perwakilan['child'])): ?>
 					<?php 
 						$hide = null;
 						$inactive = 'inactive';
