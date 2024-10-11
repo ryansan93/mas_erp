@@ -570,6 +570,7 @@ class Bakul extends Public_Controller
         //             rs.id = drs.id_header
         // ";
         $sql = "
+            /*
             select
                 min(rs.tgl_panen) as tgl_panen
             from det_real_sj drs
@@ -608,7 +609,66 @@ class Bakul extends Public_Controller
                 drs.harga > 0 and
                 drs.tonase > 0 and
                 (dpp.status = 'BELUM' or dpp.id is null)
+            */
+
+            select
+                min(drs.tgl_panen) as tgl_panen
+            from (
+                select
+                    rs.tgl_panen,
+                    drs.*
+                from det_real_sj drs
+                right join
+                    real_sj rs
+                    on
+                        drs.id_header = rs.id
+                where
+                    rs.id_unit in ('".implode("', '", $id_unit)."') and
+                    drs.no_pelanggan = '".$pelanggan."' and
+                    drs.harga > 0 and
+                    drs.tonase > 0 and
+                    not exists (select * from det_pembayaran_pelanggan where id_do = drs.id and status = 'LUNAS')
+            ) drs
+            left join
+                (
+                    select data.*, rs.tgl_panen from (
+                        select dpp1.*, pp.perusahaan, pp.no_pelanggan from det_pembayaran_pelanggan dpp1
+                        right join
+                            (select max(id) as id, id_do from det_pembayaran_pelanggan group by id_do) dpp2
+                            on
+                                dpp1.id = dpp2.id
+                        left join
+                            pembayaran_pelanggan pp
+                            on
+                                pp.id = dpp1.id_header
+                        where
+                            pp.no_pelanggan = '".$pelanggan."'
+                    ) data
+                    left join
+                        det_real_sj drs
+                        on
+                            drs.id = data.id_do
+                    left join
+                        real_sj rs
+                        on
+                            rs.id = drs.id_header 
+                    where
+                        data.perusahaan = '".$perusahaan."' and
+                        drs.id is not null
+                ) dpp
+                on
+                    drs.id = dpp.id_do
+            left join
+                (
+                    select max(tgl_mulai_bayar) as tgl_mulai_bayar, no_pelanggan from saldo_pelanggan where tgl_mulai_bayar is not null and no_pelanggan = '23B055' group by no_pelanggan
+                ) sp
+                on
+                    sp.no_pelanggan = drs.no_pelanggan 
+            where
+                drs.tgl_panen >= sp.tgl_mulai_bayar
+                and (dpp.status = 'BELUM' or dpp.id is null)
         ";
+        // cetak_r($sql, 1);
         $d_conf = $m_conf->hydrateRaw( $sql );
 
         $tgl_mulai_bayar_sp = null;
@@ -677,6 +737,8 @@ class Bakul extends Public_Controller
                 $tgl_mulai_bayar = $tgl_mulai_bayar_sp;
             }
         }
+
+        // cetak_r($tgl_mulai_bayar, 1);
 
         // $m_rs = new \Model\Storage\RealSJ_model();
         // $data_rs = null;
