@@ -886,11 +886,11 @@ class ReturVoadip extends Public_Controller
 
             $d_rv = $m_rv->where('id', $id_rv)->with(['det_retur_voadip'])->first();
 
-            $m_drv = new \Model\Storage\DetReturVoadip_model();
-            $m_drv->where('id_header', $id_rv)->delete();
+            // $m_drv = new \Model\Storage\DetReturVoadip_model();
+            // $m_drv->where('id_header', $id_rv)->delete();
 
-            $m_rv = new \Model\Storage\ReturVoadip_model();
-            $m_rv->where('id', $id_rv)->delete();
+            // $m_rv = new \Model\Storage\ReturVoadip_model();
+            // $m_rv->where('id', $id_rv)->delete();
 
             $deskripsi_log = 'di-hapus oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run( 'base/event/delete', $d_rv, $deskripsi_log);

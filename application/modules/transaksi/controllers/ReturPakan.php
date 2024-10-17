@@ -929,11 +929,11 @@ class ReturPakan extends Public_Controller
 
             $d_rp = $m_rp->where('id', $id_rp)->with(['det_retur_pakan'])->first();
 
-            $m_drp = new \Model\Storage\DetReturPakan_model();
-            $m_drp->where('id_header', $id_rp)->delete();
+            // $m_drp = new \Model\Storage\DetReturPakan_model();
+            // $m_drp->where('id_header', $id_rp)->delete();
 
-            $m_rp = new \Model\Storage\ReturPakan_model();
-            $m_rp->where('id', $id_rp)->delete();
+            // $m_rp = new \Model\Storage\ReturPakan_model();
+            // $m_rp->where('id', $id_rp)->delete();
 
             $deskripsi_log = 'di-hapus oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run( 'base/event/delete', $d_rp, $deskripsi_log);
