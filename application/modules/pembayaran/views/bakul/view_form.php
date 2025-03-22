@@ -87,7 +87,7 @@
 						<td class="text-right"><?php echo angkaDecimal($v_det['data_do']['harga']); ?></td>
 						<td class="text-right total">
 							<?php
-								$total = $v_det['data_do']['tonase'] * $v_det['data_do']['harga'];
+								$total = ($v_det['data_do']['tonase'] * $v_det['data_do']['harga']);
 								echo angkaDecimal($total);
 							?>
 						</td>
@@ -107,8 +107,11 @@
 						<td class="text-center status">
 							<?php
 								$ket = '';
-								$total_bayar = ($v_det['jumlah_bayar']+$v_det['sudah_bayar']) + $v_det['penyesuaian'];
-								if ( $total <= $total_bayar ) {
+								$total_bayar = (($v_det['jumlah_bayar']+$v_det['sudah_bayar']) + $v_det['penyesuaian']);
+
+								$selisih = round($total - $total_bayar, 2);
+
+								if ( $selisih <= 0 ) {
 									$ket = '<span style="color: blue;"><b>LUNAS</b></span>';
 								} else if ( $total > $v_det['sudah_bayar'] ) {
 									$ket = '<span style="color: red;"><b>BELUM</b></span>';

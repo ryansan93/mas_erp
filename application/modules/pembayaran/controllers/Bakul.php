@@ -195,12 +195,12 @@ class Bakul extends Public_Controller
     					'id_header' => $v_det['id_header'],
     					'id_do' => $v_det['id_do'],
     					'total_bayar' => $v_det['total_bayar'],
-    					'jumlah_bayar' => $v_det['jumlah_bayar'],
-    					'penyesuaian' => $v_det['penyesuaian'],
+    					'jumlah_bayar' => floatval(preg_replace("/[^-0-9\.]/","",$v_det['jumlah_bayar'])),
+    					'penyesuaian' => floatval(preg_replace("/[^-0-9\.]/","",$v_det['penyesuaian'])),
     					'ket_penyesuaian' => $v_det['ket_penyesuaian'],
     					'status' => $v_det['status'],
     					'data_do' => $v_det['data_do'],
-    					'sudah_bayar' => $sudah_bayar,
+    					'sudah_bayar' => floatval(preg_replace("/[^-0-9\.]/","",$sudah_bayar)),
                         'nama' => $d_rs[0]['nama'],
                         'kandang' => substr($d_rs[0]['noreg'], -2)
         			);
