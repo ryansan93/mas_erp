@@ -862,7 +862,7 @@ class Bakul extends Public_Controller
                 (drs.tonase * drs.harga) as total,
                 sum(dpp.tot_jumlah_bayar) as jumlah_bayar
             from det_real_sj drs
-            right join
+            left join
                 (
                     select
                         rs.id as id,
@@ -884,7 +884,7 @@ class Bakul extends Public_Controller
                         (select max(id) as id, noreg, tgl_panen from real_sj where tgl_panen >= '".$tgl_mulai_bayar."' and id_unit in ('".implode("', '", $id_unit)."') group by noreg, tgl_panen) rs2
                         on
                             rs.id = rs2.id
-                    right join
+                    left join
                         (
                             select rs.noreg, m.jenis, m.nama, m.perusahaan from rdim_submit rs
                             right join
@@ -897,7 +897,7 @@ class Bakul extends Public_Controller
                                 ) mm
                                 on
                                     rs.nim = mm.nim
-                            right join
+                            left join
                                 mitra m
                                 on
                                     mm.mitra = m.id
@@ -937,11 +937,13 @@ class Bakul extends Public_Controller
                 on
                     dpp.id_do = drs.id
             where
+                rs.id is not null and
                 (dpp.status = 'BELUM' or dpp.id is null) and
                 drs.harga > 0 and
                 drs.tonase > 0 and
                 drs.no_pelanggan = '".$no_pelanggan."'
             group by
+                rs.id,
                 drs.id,
                 rs.nama,
                 rs.noreg,
