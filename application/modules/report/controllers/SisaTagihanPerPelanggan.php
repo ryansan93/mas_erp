@@ -381,7 +381,7 @@ class SisaTagihanPerPelanggan extends Public_Controller {
                         ) as rs
                         on
                             drs.id_header = rs.id
-                    right join
+                    left join
                         (
                             select plg1.* from pelanggan plg1
                             right join
@@ -391,19 +391,19 @@ class SisaTagihanPerPelanggan extends Public_Controller {
                         ) plg
                         on
                             drs.no_pelanggan = plg.nomor
-                    right join
+                    left join
                         (select nim, noreg from rdim_submit group by nim, noreg) rdim
                         on
                             rs.noreg = rdim.noreg
-                    right join
+                    left join
                         (select max(mitra) as id_mitra, nim from mitra_mapping group by nim) mm
                         on
                             rdim.nim = mm.nim
-                    right join
+                    left join
                         mitra mitra
                         on
                             mm.id_mitra = mitra.id
-                    right join
+                    left join
                         (
                             select max(id) as id, no_pelanggan, tgl_mulai_bayar from saldo_pelanggan group by no_pelanggan, tgl_mulai_bayar
                         ) sp
@@ -411,7 +411,7 @@ class SisaTagihanPerPelanggan extends Public_Controller {
                             drs.no_pelanggan = sp.no_pelanggan
                     where
                         not exists (select * from det_pembayaran_pelanggan where id_do = drs.id and status = 'LUNAS') and
-                        rs.tgl_panen >= sp.tgl_mulai_bayar and
+                        (rs.tgl_panen >= sp.tgl_mulai_bayar or sp.tgl_mulai_bayar is null) and
                         drs.no_do like '%".$v_ku."%'
                 ) as data_rs
                 where
@@ -430,16 +430,16 @@ class SisaTagihanPerPelanggan extends Public_Controller {
                     harga,
                     tgl_panen,
                     nama";
-
+            
             $m_drs = new \Model\Storage\DetRealSJ_model();
             $d_drs = $m_drs->hydrateRaw($sql);
 
             if ( $d_drs->count() > 0 ) {
-                $d_drs = $d_drs->toArray();
+                $data_rsj = $d_drs->toArray();
 
-                foreach ($d_drs as $k_drs => $v_drs) {
-                    $data_rsj[] = $v_drs;
-                }
+                // foreach ($d_drs as $k_drs => $v_drs) {
+                //     $data_rsj[] = $v_drs;
+                // }
             }
         }
 
