@@ -429,7 +429,7 @@
 					<div class="col-xs-12"><b><?php echo strtoupper($data['mitra']); ?></b></div>
 				</td>
 				<td class="col-xs-6" align="center">
-					<div class="col-xs-12"><?php echo $data['unit_karyawan'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
+					<div class="col-xs-12"><?php echo $data['unit'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
 					<div class="col-xs-12">Mengetahui,</div>
 					<div class="col-xs-12">
 						<br>
@@ -1333,7 +1333,7 @@
 					<div class="col-xs-12"><b><?php echo strtoupper($data['mitra']); ?></b></div>
 				</td>
 				<td class="col-xs-6" align="center">
-					<div class="col-xs-12"><?php echo $data['unit_karyawan'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
+					<div class="col-xs-12"><?php echo $data['unit'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
 					<div class="col-xs-12">Mengetahui,</div>
 					<div class="col-xs-12">
 						<br>
