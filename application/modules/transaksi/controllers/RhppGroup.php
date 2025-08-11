@@ -2093,7 +2093,7 @@ class RhppGroup extends Public_Controller {
         $data_pemakaian_pakan = null;
         $hasil = null;
         $biaya_produksi = null;
-        $hasil_produksi = null;
+        $hasil_produksi = null;        
 
         $data_header['nomor'] = $d_rhpp_group_header['nomor'];
         $data_header['mitra'] = $d_rhpp_group_header['mitra'];
@@ -2194,6 +2194,23 @@ class RhppGroup extends Public_Controller {
 
             $unit = str_replace('Kota ', '', str_replace('Kab ', '', $d_rs['d_kandang']['d_unit']['nama']));
 
+            $m_conf = new \Model\Storage\Conf();
+            $sql = "
+                select prs.* from perusahaan prs
+                where
+                    prs.kode = '".$d_rs['mitra']['d_mitra']['perusahaan']."'
+                order by
+                    prs.id desc
+            ";
+            $d_prs = $m_conf->hydrateRaw( $sql );
+
+            $perusahaan = null;
+            if ( $d_prs->count() > 0 ) {
+                $d_prs = $d_prs->toArray()[0];
+
+                $perusahaan = $d_prs['perusahaan'];
+            }
+
             $data_header['npwp'] = $npwp;
             $data_header['alamat_mitra'] = $alamat_mitra;
             $data_header['alamat_kdg'][ $alamat_kdg ] = $alamat_kdg;
@@ -2201,6 +2218,7 @@ class RhppGroup extends Public_Controller {
             $data_header['ppl'][ $d_rs['sampling'] ] = $d_rs['d_sampling']['nama'];
             $data_header['kanit'] = $d_rs['d_pengawas']['nama'];
             $data_header['unit'][ $d_rs['d_kandang']['d_unit']['kode'] ] = $unit;
+            $data_header['perusahaan'] = $perusahaan;
 
             $tot_populasi += $v_ln['populasi'];
         }
@@ -2504,6 +2522,8 @@ class RhppGroup extends Public_Controller {
         $content['id'] = isset($id) ? $id : null;
         $content['data'] = $data_header;
         $content['data_plasma'] = $data_rhpp_plasma;
+
+        // cetak_r( $content['data'], 1 );
 
         $res_view_html = $this->load->view('transaksi/rhpp_group/export_to_pdf', $content, true);
 

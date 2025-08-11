@@ -118,7 +118,8 @@
 </style>
 
 <div class="contain page-break" style="width: 100%;">
-	<h1 class="text-center">CV. MITRA GEMUK BERSAMA</h1>
+	<!-- <h1 class="text-center">CV. MITRA GEMUK BERSAMA</h1> -->
+	<h1 class="text-center"><?php echo strtoupper($data['perusahaan']); ?></h1>
 	<!-- <p>Hal : Laporan Hasil Plasma</p> -->
 	<br>
 	<p>Dengan Hormat,</p>
@@ -363,7 +364,7 @@
 					<?php foreach ($data_plasma['detail']['data_potongan'] as $k_db => $v_db): ?>
 						<li>
 							<label style="display: inline-block; text-align: left; width: 76.3%;"><?php echo $v_db['keterangan']; ?></label>
-							<label class="col-xs-2" style="display: inline-block; text-align: right;"><?php echo '('.angkaRibuan(abs($v_db['jumlah_bayar'])).')'; ?></label>
+							<label class="col-xs-2" style="display: inline-block; text-align: right;"><?php echo '('.angkaRibuan(abs($v_db['sudah_bayar'])).')'; ?></label>
 						</li>
 					<?php endforeach ?>
 				<?php endif ?>
@@ -429,7 +430,7 @@
 					<div class="col-xs-12"><b><?php echo strtoupper($data['mitra']); ?></b></div>
 				</td>
 				<td class="col-xs-6" align="center">
-					<div class="col-xs-12"><?php echo $data['unit'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
+					<div class="col-xs-12"><?php echo $data['unit_karyawan'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
 					<div class="col-xs-12">Mengetahui,</div>
 					<div class="col-xs-12">
 						<br>
@@ -1333,7 +1334,7 @@
 					<div class="col-xs-12"><b><?php echo strtoupper($data['mitra']); ?></b></div>
 				</td>
 				<td class="col-xs-6" align="center">
-					<div class="col-xs-12"><?php echo $data['unit'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
+					<div class="col-xs-12"><?php echo $data['unit_karyawan'].', '.tglIndonesia($data['tgl_submit'], '-', ' ', true); ?></div>
 					<div class="col-xs-12">Mengetahui,</div>
 					<div class="col-xs-12">
 						<br>
