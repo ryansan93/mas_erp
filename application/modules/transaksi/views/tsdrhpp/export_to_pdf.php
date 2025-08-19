@@ -353,7 +353,7 @@
 					<?php foreach ($data_plasma['detail']['data_potongan'] as $k_db => $v_db): ?>
 						<li>
 							<label style="display: inline-block; text-align: left; width: 76.3%;"><?php echo $v_db['keterangan']; ?></label>
-							<label class="col-xs-2" style="display: inline-block; text-align: right;"><?php echo '('.angkaRibuan(abs($v_db['jumlah_bayar'])).')'; ?></label>
+							<label class="col-xs-2" style="display: inline-block; text-align: right;"><?php echo '('.angkaRibuan(abs($v_db['sudah_bayar'])).')'; ?></label>
 						</li>
 					<?php endforeach ?>
 				<?php endif ?>
