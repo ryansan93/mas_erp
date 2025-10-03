@@ -708,29 +708,6 @@
 											<small>
 												<table class="table table-nobordered potongan" style="margin-bottom: 0px;">
 													<tbody>
-														<!-- <?php $total_potongan = 0; $idx = 0; ?>
-														<?php if ( !empty($data_plasma['detail']['data_potongan']) ): ?>
-															<?php $dp = $data_plasma['detail']['data_potongan']; ?>
-															<?php foreach ($dp as $k_dp => $v_dp): ?>
-																<?php if ( $v_dp['sudah_bayar'] > 0 ): ?>
-																	<tr class="potongan <?php echo ($idx == 0) ? 'top' : ''; ?>" data-idtrans="<?php echo $v_dp['id_jual']; ?>">
-																		<td class="col-sm-5 kiri kanan keterangan" data-val="<?php echo $v_dp['keterangan']; ?>"><?php echo $v_dp['keterangan']; ?></td>
-																		<td class="col-sm-4 text-right kanan jumlah_tagihan" data-tagihan="<?php echo $v_dp['tagihan']; ?>" data-bayar="<?php echo $v_dp['sudah_bayar']; ?>">
-																			<?php echo angkaDecimal($v_dp['sudah_bayar']); ?>
-																		</td>
-
-																		<?php $total_potongan += $v_dp['sudah_bayar']; ?>
-																	</tr>
-																	<?php $idx++; ?>
-																<?php endif ?>
-															<?php endforeach ?>
-														<?php endif ?>
-														<tr class="top_bottom">
-															<td class="col-sm-5 kiri kanan text-right"><b>TOTAL</b></td>
-															<td class="col-sm-4 kanan text-right total_potongan" data-val="<?php echo $total_potongan; ?>"><b><?php echo angkaDecimal($total_potongan); ?></b></td>
-														</tr>
-
-														<?php $total_pengeluaran += $total_potongan; ?> -->
 														<?php $total_potongan = 0; $idx = 0; ?>
 														<?php if ( empty($id) ): ?>
 															<?php if ( !empty($data_plasma['detail']['data_potongan']) ): ?>
