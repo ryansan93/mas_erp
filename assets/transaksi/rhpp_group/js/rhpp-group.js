@@ -724,6 +724,7 @@ var rg = {
 				'data_oa_pakan': data_oa_pakan,
 				'data_pindah_pakan': data_pindah_pakan,
 				'data_oa_pindah_pakan': data_oa_pindah_pakan,
+				'data_retur_pakan': data_retur_pakan,
 				'data_oa_retur_pakan': data_oa_retur_pakan,
 				'data_voadip': data_voadip,
 				'data_retur_voadip': data_retur_voadip,
@@ -759,7 +760,7 @@ var rg = {
 		            },
 		            type : 'POST',
 		            dataType : 'JSON',
-		            beforeSend : function(){ showLoading; },
+		            beforeSend : function(){ showLoading(); },
 		            success : function(data){
 		            	hideLoading();
 
