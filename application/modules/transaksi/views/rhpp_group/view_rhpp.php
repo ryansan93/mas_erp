@@ -1269,6 +1269,7 @@
 					                			<tr class="head">
 					                				<td colspan="7"><b>ONGKOS ANGKUT RETUR PAKAN</b></td>
 					                			</tr>
+												<?php // cetak_r( $data_inti['detail'] ); ?>
 					                			<?php if ( !empty($data_inti['detail']['data_oa_retur_pakan']) ): ?>
 					                				<?php 
 					                					$data_oa_retur_pakan = $data_inti['detail']['data_oa_retur_pakan'];
@@ -1276,8 +1277,8 @@
 					                					$total_jumlah = 0;
 					                					$total_nilai = 0;
 					                				?>
-					                				<?php foreach ($data_oa_retur_pakan as $k_dorp => $v_dorp): ?>
-						                				<?php foreach ($v_dorp as $k => $val): ?>
+					                				<?php foreach ($data_oa_retur_pakan as $k_dorp => $val): ?>
+						                				<?php // foreach ($v_dorp as $k => $val): ?>
 						                					<tr class="data_oa_retur_pakan">
 								                				<td class="text-left tanggal" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
 								                				<td class="text-center nopol" data-val="<?php echo strtoupper($val['nopol']); ?>" data-nota="<?php echo $k; ?>"><?php echo strtoupper($val['nopol']); ?></td>
@@ -1293,7 +1294,7 @@
 								                			<?php $total_jumlah += $val['jumlah']; ?>
 
 															<?php $total_pemakaian_nilai -= $val['total']; ?>
-						                				<?php endforeach ?>
+						                				<?php // endforeach ?>
 					                				<?php endforeach ?>
 					                				<tr>
 					                					<td class="text-right" colspan="3"><b>TOTAL ONGKOS ANGKUT RETUR</b></td>
