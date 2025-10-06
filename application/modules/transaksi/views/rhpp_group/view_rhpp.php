@@ -1240,7 +1240,7 @@
 					                				<?php foreach ($data_retur_pakan as $k => $val): ?>
 					                					<tr class="data_retur_pakan">
 							                				<td class="text-left" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
-							                				<td class="text-center nota" data-val="<?php echo $val['no_retur']; ?>"><?php echo $val['no_retur']; ?></td>
+							                				<td class="text-center nota" data-val="<?php echo $val['sj']; ?>"><?php echo $val['sj']; ?></td>
 							                				<td class="barang" data-val="<?php echo $val['barang']; ?>"><?php echo $val['barang']; ?></td>
 							                				<?php $zak = ($val['jumlah'] > 0) ? $val['jumlah']/50 : 0; ?>
 							                				<td class="text-right box_zak" data-val="<?php echo $zak; ?>"><?php echo angkaRibuan($zak); ?></td>
