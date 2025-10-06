@@ -6051,7 +6051,7 @@ class TSDRHPP extends Public_Controller {
         $content['data'] = $data;
         $content['data_plasma'] = $data_rhpp_plasma;
 
-        cetak_r( $content['data_plasma'] );
+        // cetak_r( $content['data_plasma'] );
 
         $res_view_html = $this->load->view('transaksi/tsdrhpp/export_to_pdf', $content, true);
 
