@@ -347,7 +347,7 @@
 					                				<?php foreach ($data_retur_pakan as $k => $val): ?>
 					                					<tr class="data_retur_pakan">
 							                				<td class="text-left tanggal" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
-							                				<td class="text-center nota" data-val="<?php echo $val['nota']; ?>"><?php echo $val['nota']; ?></td>
+							                				<td class="text-center nota" data-val="<?php echo $val['sj']; ?>"><?php echo $val['sj']; ?></td>
 							                				<td class="barang" data-val="<?php echo $val['barang']; ?>"><?php echo $val['barang']; ?></td>
 							                				<?php $zak = ($val['jumlah'] > 0) ? $val['jumlah']/50 : 0; ?>
 							                				<td class="text-right box_zak" data-val="<?php echo $zak; ?>"><?php echo angkaRibuan($zak); ?></td>
@@ -418,7 +418,7 @@
 					                				<?php foreach ($data_retur_voadip as $k => $val): ?>
 					                					<tr class="data_retur_voadip">
 							                				<td class="text-left tanggal" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
-							                				<td class="text-center nota" data-val="<?php echo $val['nota']; ?>"><?php echo $val['nota']; ?></td>
+							                				<td class="text-center nota" data-val="<?php echo $val['no_retur']; ?>"><?php echo $val['no_retur']; ?></td>
 							                				<td colspan="2" class="barang" data-val="<?php echo $val['barang']; ?>"><?php echo $val['barang']; ?></td>
 							                				<td class="text-right jumlah" data-val="<?php echo $val['jumlah']; ?>"><?php echo angkaDecimal($val['jumlah']); ?></td>
 							                				<td class="text-right harga" data-val="<?php echo $val['harga']; ?>"><?php echo angkaDecimalFormat($val['harga'], $val['decimal']); ?></td>
@@ -1191,7 +1191,7 @@
 					                				<?php foreach ($data_retur_pakan as $k => $val): ?>
 					                					<tr class="data_retur_pakan">
 							                				<td class="text-left tanggal" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
-							                				<td class="text-center nota" data-val="<?php echo $val['nota']; ?>"><?php echo $val['nota']; ?></td>
+							                				<td class="text-center nota" data-val="<?php echo $val['sj']; ?>"><?php echo $val['sj']; ?></td>
 							                				<td class="barang" data-val="<?php echo $val['barang']; ?>"><?php echo $val['barang']; ?></td>
 							                				<?php $zak = ($val['jumlah'] > 0) ? $val['jumlah']/50 : 0; ?>
 							                				<td class="text-right box_zak" data-val="<?php echo $zak; ?>"><?php echo angkaRibuan($zak); ?></td>
@@ -1305,7 +1305,7 @@
 					                				<?php foreach ($data_retur_voadip as $k => $val): ?>
 					                					<tr class="data_retur_voadip">
 							                				<td class="text-left tanggal" data-val="<?php echo $val['tanggal']; ?>"><?php echo tglIndonesia($val['tanggal'], '-', ' '); ?></td>
-							                				<td class="text-center nota" data-val="<?php echo $val['nota']; ?>"><?php echo $val['nota']; ?></td>
+							                				<td class="text-center nota" data-val="<?php echo $val['no_retur']; ?>"><?php echo $val['no_retur']; ?></td>
 							                				<td colspan="2" class="barang" data-val="<?php echo $val['barang']; ?>"><?php echo $val['barang']; ?></td>
 							                				<td class="text-right jumlah" data-val="<?php echo $val['jumlah']; ?>"><?php echo angkaDecimal($val['jumlah']); ?></td>
 							                				<td class="text-right harga" data-val="<?php echo $val['harga']; ?>"><?php echo angkaDecimalFormat($val['harga'], $val['decimal']); ?></td>
