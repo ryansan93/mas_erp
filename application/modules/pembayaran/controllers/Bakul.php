@@ -668,7 +668,6 @@ class Bakul extends Public_Controller
                 drs.tgl_panen >= sp.tgl_mulai_bayar
                 and (dpp.status = 'BELUM' or dpp.id is null)
         ";
-        // cetak_r($sql, 1);
         $d_conf = $m_conf->hydrateRaw( $sql );
 
         $tgl_mulai_bayar_sp = null;
