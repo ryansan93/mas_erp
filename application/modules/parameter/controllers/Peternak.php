@@ -880,11 +880,12 @@ class Peternak extends Public_Controller {
 
                 // NOTE: save mitra_mapping
                 $m_mitra_mapping = new \Model\Storage\MitraMapping_model();
+                $nim = (isset($perwakilan['nim']) && !empty($perwakilan['nim'])) ? $perwakilan['nim'] : $m_mitra_mapping->getNextNim();
                 $mitra_mapping_id = $m_mitra_mapping->getNextIdentity();
                 $m_mitra_mapping->id = $mitra_mapping_id;
-                $m_mitra_mapping->mitra = $id_mitra;
+                $m_mitra_mapping->mitra = $id_mitra; 
                 $m_mitra_mapping->perwakilan = $perwakilan['perwakilan_id'];
-                $m_mitra_mapping->nim = $perwakilan['nim'];
+                $m_mitra_mapping->nim = $nim;
                 $m_mitra_mapping->nomor = $nomor_mitra;
                 $m_mitra_mapping->save();
 
