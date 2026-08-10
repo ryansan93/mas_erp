@@ -115,7 +115,7 @@ class MutasiStok extends Public_Controller {
 
         $data = array(
             'gudang' => $data_gdg,
-            'barang' => $data_brg
+            'barang' => $data_brg 
         );
 
         $this->result['list_data'] = $data;
