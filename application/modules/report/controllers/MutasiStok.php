@@ -104,6 +104,7 @@ class MutasiStok extends Public_Controller {
                     brg1.id = brg2.id
             where
                 brg1.tipe = '".$params."'
+                and brg1.g_status <> 0
             order by
                 brg1.nama asc
         ";
