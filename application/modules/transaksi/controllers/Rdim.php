@@ -1183,19 +1183,43 @@ class Rdim extends Public_Controller
                 on
                     rs.kandang = kdg.id
             left join
-                karyawan kry_pengawas
+                (
+                    select k1.nik, k1.nama from karyawan k1
+                    right join
+                        (select max(id) as id, nik from karyawan group by nik) k2
+                        on
+                            k1.id = k2.id
+                ) kry_pengawas
                 on
                     rs.pengawas = kry_pengawas.nik
             left join
-                karyawan kry_sampling
+                (
+                    select k1.nik, k1.nama from karyawan k1
+                    right join
+                        (select max(id) as id, nik from karyawan group by nik) k2
+                        on
+                            k1.id = k2.id
+                ) kry_sampling
                 on
                     rs.sampling = kry_sampling.nik
             left join
-                karyawan kry_tp
+                (
+                    select k1.nik, k1.nama from karyawan k1
+                    right join
+                        (select max(id) as id, nik from karyawan group by nik) k2
+                        on
+                            k1.id = k2.id
+                ) kry_tp
                 on
                     rs.tim_panen = kry_tp.nik
             left join
-                karyawan kry_koar
+                (
+                    select k1.nik, k1.nama from karyawan k1
+                    right join
+                        (select max(id) as id, nik from karyawan group by nik) k2
+                        on
+                            k1.id = k2.id
+                ) kry_koar
                 on
                     rs.koar = kry_koar.nik
             left join

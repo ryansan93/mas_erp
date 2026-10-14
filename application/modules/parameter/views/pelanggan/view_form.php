@@ -50,7 +50,7 @@
 									$disabled = null;
 								} 
 							?>
-							<a type="button" class="col-xs-12 btn btn-default pull-right <?php echo $disabled; ?>" href="https://www.google.com/maps/?q=<?php echo $data['posisi']['lat_long']; ?>" target="_blank">
+							<a type="button" class="col-xs-12 btn btn-default pull-right <?php echo $disabled; ?>" href="https://www.google.com/maps/?q=<?php echo $data['posisi']['lat_long'] ?? ''; ?>" target="_blank">
 								<i class="fa fa-map-marker"></i> Lokasi
 							</a>
 						</div>
@@ -61,7 +61,7 @@
 									$disabled = null;
 								} 
 							?>
-							<a type="button" class="col-xs-12 btn btn-default pull-right <?php echo $disabled; ?>" href="uploads/<?php echo $data['posisi']['foto_kunjungan'] ?>" target="_blank">
+							<a type="button" class="col-xs-12 btn btn-default pull-right <?php echo $disabled; ?>" href="uploads/<?php echo $data['posisi']['foto_kunjungan'] ?? '' ?>" target="_blank">
 								<i class="fa fa-camera"></i> Foto
 							</a>
 						</div>
@@ -101,7 +101,7 @@
 						</div>
 						<div class="col-sm-8 no-padding">
 							<div class="col-sm-12">
-								<a target="_blank" href="<?php echo 'uploads/'.$l_ktp['path']; ?>" ><?php echo $l_ktp['filename']; ?></a>
+								<a target="_blank" href="<?php echo 'uploads/'.($l_ktp['path'] ?? ''); ?>" ><?php echo $l_ktp['filename'] ?? ''; ?></a>
 							</div>
 						</div>
 					</div>
@@ -193,7 +193,7 @@
 						</div>
 						<div class="col-sm-8 no-padding">
 							<div class="col-sm-12">
-								<a target="_blank" href="<?php echo 'uploads/'.$l_npwp['path']; ?>" ><?php echo $l_npwp['filename']; ?></a>
+								<a target="_blank" href="<?php echo 'uploads/'.($l_npwp['path'] ?? ''); ?>" ><?php echo $l_npwp['filename'] ?? ''; ?></a>
 							</div>
 						</div>
 					</div>

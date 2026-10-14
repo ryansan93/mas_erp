@@ -179,28 +179,28 @@ class Pelanggan extends Public_Controller {
 		// mengambil lokasi
 		$lokasi = new \Model\Storage\Lokasi_model();
 		$kec = $lokasi->where('id', $d_pelanggan['alamat_kecamatan'])->first();
-		$kota = $lokasi->where('id', $kec['induk'])->first();
-		$prov = $lokasi->where('id', $kota['induk'])->first();
+		$kota = $lokasi->where('id', $kec['induk'] ?? null)->first();
+		$prov = $lokasi->where('id', $kota['induk'] ?? null)->first();
 		$kec_usaha = $lokasi->where('id', $d_pelanggan['usaha_kecamatan'])->first();
-		$kota_usaha = $lokasi->where('id', $kec_usaha['induk'])->first();
-		$prov_usaha = $lokasi->where('id', $kota_usaha['induk'])->first();
+		$kota_usaha = $lokasi->where('id', $kec_usaha['induk'] ?? null)->first();
+		$prov_usaha = $lokasi->where('id', $kota_usaha['induk'] ?? null)->first();
 
 		// simpan data lokasi
 		$detail_lokasi = array(
-			'prov_id' => $prov['id'],
-			'prov' => $prov['nama'],
-			'kota_id' => $kota['id'],
-			'kota_jenis' => $kota['jenis'],
-			'kota' => $kota['nama'],
-			'kec_id' => $kec['id'],
-			'kec' => $kec['nama'],
-			'prov_usaha_id' => $prov_usaha['id'],
-			'prov_usaha' => $prov_usaha['nama'],
-			'kota_usaha_id' => $kota_usaha['id'],
-			'kota_usaha' => $kota_usaha['nama'],
-			'kota_usaha_jenis' => $kota_usaha['jenis'],
-			'kec_usaha_id' => $kec_usaha['id'],
-			'kec_usaha' => $kec_usaha['nama']
+			'prov_id' => $prov['id'] ?? null,
+			'prov' => $prov['nama'] ?? null,
+			'kota_id' => $kota['id'] ?? null,
+			'kota_jenis' => $kota['jenis'] ?? null,
+			'kota' => $kota['nama'] ?? null,
+			'kec_id' => $kec['id'] ?? null,
+			'kec' => $kec['nama'] ?? null,
+			'prov_usaha_id' => $prov_usaha['id'] ?? null,
+			'prov_usaha' => $prov_usaha['nama'] ?? null,
+			'kota_usaha_id' => $kota_usaha['id'] ?? null,
+			'kota_usaha' => $kota_usaha['nama'] ?? null,
+			'kota_usaha_jenis' => $kota_usaha['jenis'] ?? null,
+			'kec_usaha_id' => $kec_usaha['id'] ?? null,
+			'kec_usaha' => $kec_usaha['nama'] ?? null
 		);
 
 		// mengambil lampiran pelanggan
@@ -245,26 +245,26 @@ class Pelanggan extends Public_Controller {
 		// mengambil lokasi
 		$lokasi = new \Model\Storage\Lokasi_model();
 		$kec = $lokasi->where('id', $d_pelanggan['alamat_kecamatan'])->first();
-		$kota = $lokasi->where('id', $kec['induk'])->first();
-		$prov = $lokasi->where('id', $kota['induk'])->first();
+		$kota = $lokasi->where('id', $kec['induk'] ?? null)->first();
+		$prov = $lokasi->where('id', $kota['induk'] ?? null)->first();
 		$kec_usaha = $lokasi->where('id', $d_pelanggan['usaha_kecamatan'])->first();
-		$kota_usaha = $lokasi->where('id', $kec_usaha['induk'])->first();
-		$prov_usaha = $lokasi->where('id', $kota_usaha['induk'])->first();
+		$kota_usaha = $lokasi->where('id', $kec_usaha['induk'] ?? null)->first();
+		$prov_usaha = $lokasi->where('id', $kota_usaha['induk'] ?? null)->first();
 
 		// simpan data lokasi
 		$detail_lokasi = array(
-			'prov_id' => $prov['id'],
-			'prov' => $prov['nama'],
-			'kota_id' => $kota['id'],
-			'kota' => $kota['nama'],
-			'kec_id' => $kec['id'],
-			'kec' => $kec['nama'],
-			'prov_usaha_id' => $prov_usaha['id'],
-			'prov_usaha' => $prov_usaha['nama'],
-			'kota_usaha_id' => $kota_usaha['id'],
-			'kota_usaha' => $kota_usaha['nama'],
-			'kec_usaha_id' => $kec_usaha['id'],
-			'kec_usaha' => $kec_usaha['nama']
+			'prov_id' => $prov['id'] ?? null,
+			'prov' => $prov['nama'] ?? null,
+			'kota_id' => $kota['id'] ?? null,
+			'kota' => $kota['nama'] ?? null,
+			'kec_id' => $kec['id'] ?? null,
+			'kec' => $kec['nama'] ?? null,
+			'prov_usaha_id' => $prov_usaha['id'] ?? null,
+			'prov_usaha' => $prov_usaha['nama'] ?? null,
+			'kota_usaha_id' => $kota_usaha['id'] ?? null,
+			'kota_usaha' => $kota_usaha['nama'] ?? null,
+			'kec_usaha_id' => $kec_usaha['id'] ?? null,
+			'kec_usaha' => $kec_usaha['nama'] ?? null
 		);
 
 		// mengambil lampiran pelanggan
