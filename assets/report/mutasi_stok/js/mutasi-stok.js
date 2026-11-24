@@ -27,7 +27,7 @@ var ms = {
 					if ( !empty(data.list_data.gudang) ) {
 						var data_gudang = data.list_data.gudang;
 						for (var i = 0; i < data_gudang.length; i++) {
-							opt_gudang += '<option value="'+data_gudang[i].id+'">'+data_gudang[i].nama.toUpperCase()+'</option>';
+							opt_gudang += '<option value="'+data_gudang[i].id+'">'+String(data_gudang[i].nama || '').toUpperCase()+'</option>';
 						}
 					}
 
@@ -37,11 +37,15 @@ var ms = {
 					if ( !empty(data.list_data.barang) ) {
 						var data_brg = data.list_data.barang;
 						for (var i = 0; i < data_brg.length; i++) {
-							opt_brg += '<option value="'+data_brg[i].kode+'">'+data_brg[i].nama.toUpperCase()+'</option>';
+							opt_brg += '<option value="'+data_brg[i].kode+'">'+String(data_brg[i].nama || data_brg[i].kode || '').toUpperCase()+'</option>';
 						}
 					}
 
 					$('select.barang').html( opt_brg );
+				},
+				error: function() {
+					hideLoading();
+					bootbox.alert('Gagal mengambil data gudang dan barang.');
 				},
 		    });
 		} else {
